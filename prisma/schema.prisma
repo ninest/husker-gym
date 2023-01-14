@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model gym {
+  id         Int    @id @default(autoincrement())
+  slug       String @db.VarChar(255)
+  name       String @db.VarChar(255)
+  short_name String @db.VarChar(255)
+
+  sections section[]
+}
+
+model section {
+  id          Int    @id @default(autoincrement())
+  slug        String @db.VarChar(255)
+  name        String @db.VarChar(255)
+  short_name  String @db.VarChar(255)
+  c2c_name    String @db.VarChar(255)
+  description String @db.VarChar(255)
+
+  gym_id Int?
+  gym    gym? @relation(fields: [gym_id], references: [id])
+
+  records record[]
+}
+
+model record {
+  id      Int      @id @default(autoincrement())
+  time    DateTime @db.DateTime(0)
+  count   Int
+  percent Int
+
+  section_id Int?
+  section    section? @relation(fields: [section_id], references: [id])
+}
