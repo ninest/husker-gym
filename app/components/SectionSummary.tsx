@@ -1,4 +1,5 @@
 import { prisma } from "@/db/prisma";
+import { bostonTime, lastUpdated } from "@/utils/date";
 
 export const SectionSummary = async ({ id }: { id: number }) => {
   const section = await prisma.section.findFirst({ where: { id } });
@@ -18,7 +19,7 @@ export const SectionSummary = async ({ id }: { id: number }) => {
       <div>
         Current count: {latestRecord?.count}, {latestRecord?.percent}% full
       </div>
-      <div>Updated at {latestRecord?.time.toISOString()}</div>
+      <div>{lastUpdated(latestRecord?.time!)}</div>
     </div>
   );
 };
