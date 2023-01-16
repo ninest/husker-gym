@@ -4,6 +4,8 @@ import { DayHour } from "@/types";
 import { bostonTime, parseListWithDate } from "@/utils/date";
 import { record, section } from "@prisma/client";
 import clsx from "clsx";
+import { format } from "date-fns";
+import { addHours } from "date-fns/esm";
 import { useState } from "react";
 
 export const WeekHeatMap = ({
@@ -17,16 +19,25 @@ export const WeekHeatMap = ({
 
   // day is 0-indexed
   const getFilteredRecords = ({ day, hour }: DayHour) => {
+    console.log({ day, hour });
+
     // Take into account for timezones
     const offsetHours = new Date().getTimezoneOffset() / 60;
     const hourTZ = hour - offsetHours;
+    // const hourTZ = hour;
     const filteredRecords = records.filter(
       (record) =>
         record.time.getDay() === day &&
         record.time.getHours() >= hourTZ &&
         record.time.getHours() < hourTZ + 1
     );
-    return filteredRecords;
+
+    // Add offsetHours to each record
+    const offsetRecords = filteredRecords.map((record) => ({
+      ...record,
+      time: addHours(record.time, offsetHours),
+    }));
+    return offsetRecords;
   };
 
   const getAverageCount = ({ day, hour }: DayHour) => {
@@ -59,7 +70,8 @@ export const WeekHeatMap = ({
     { name: "Saturday", shortName: "Sat", singleChar: "S" },
   ];
   const hours = [
-    4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+    22, 23, 0,
   ];
 
   // Highlight current day/time on heatmap
@@ -114,7 +126,7 @@ export const WeekHeatMap = ({
                       "ring-4 ring-green-400": isNow,
                     }
                   )}
-                  onMouseEnter={() =>
+                  onClick={() =>
                     setSelectedDayHour({ day: dayIndex, hour: hour })
                   }
                 />
@@ -129,17 +141,36 @@ export const WeekHeatMap = ({
           <div className="p-4 rounded-lg bg-gray-100">
             {validDataForDayHour(selectedDayHour) ? (
               <>
-                <div className="font-medium">
-                  On {days[selectedDayHour.day].name} at {selectedDayHour.hour}
-                  :00, {section.name} usually has{" "}
-                  <span className="font-bold">
-                    {getAverageCount(selectedDayHour)} people
-                  </span>{" "}
-                  and is{" "}
-                  <span className="font-bold">
-                    {getAveragePercent(selectedDayHour)}% full
-                  </span>
-                  .
+                <div className="space-y-3">
+                  <p className="">
+                    On {days[selectedDayHour.day].name} at{" "}
+                    {selectedDayHour.hour}
+                    :00, {section.name} usually has{" "}
+                    <span className="font-bold">
+                      {getAverageCount(selectedDayHour)} people
+                    </span>{" "}
+                    and is{" "}
+                    <span className="font-bold">
+                      {getAveragePercent(selectedDayHour)}% full
+                    </span>
+                    .
+                  </p>
+
+                  <p className="">In the past weeks,</p>
+                  <ul className="text-sm list-disc list-outside ml-5">
+                    {getFilteredRecords(selectedDayHour).map((record) => (
+                      <li>
+                        On {format(record.time, "EEEE, LLLL d 'at' HH:mm")},{" "}
+                        {section.name} had{" "}
+                        <span className="font-bold">{record.count} people</span>{" "}
+                        and was{" "}
+                        <span className="font-bold">
+                          {record.percent}% full
+                        </span>
+                        .
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </>
             ) : (
@@ -156,7 +187,7 @@ export const WeekHeatMap = ({
       ) : (
         <div className="p-4 rounded-lg border-4 border-dashed">
           <div className="font-medium text-center text-gray-500">
-            Hover on a cell to get more information about the gym on that day
+            Click on a cell to get more information about the gym on that day
             and time.
           </div>
         </div>
