@@ -3,6 +3,12 @@
 import { bostonTime, parseListWithDate } from "@/utils/date";
 import { record } from "@prisma/client";
 import clsx from "clsx";
+import { useState } from "react";
+
+interface SelectedDayHour {
+  day: number;
+  hour: number;
+}
 
 export const WeekHeatMap = ({
   serializedRecords,
@@ -55,8 +61,7 @@ export const WeekHeatMap = ({
     { name: "Saturday", shortName: "Sat", singleChar: "S" },
   ];
   const times = [
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
-    22, 23,
+    4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
   ];
 
   // Highlight current day/time on heatmap
@@ -64,54 +69,74 @@ export const WeekHeatMap = ({
   const currentDayIndex = now.getDay();
   const currentHour = now.getHours();
 
-  console.log(currentDayIndex, currentHour);
+  const [selectedDayHour, setSelectedDayHour] =
+    useState<SelectedDayHour | null>(null);
 
   return (
     <div>
-      {/* First row, days */}
-      <div className="grid grid-cols-8 gap-2 mb-3">
-        <div></div>
-        {days.map((day, dayIndex) => (
-          <div
-            key={day.shortName}
-            className={clsx("text-center", {
-              "font-bold": currentDayIndex == dayIndex,
+      <div>
+        {/* First row, days */}
+        <div className="grid grid-cols-8 gap-2 mb-3">
+          <div></div>
+          {days.map((day, dayIndex) => (
+            <div
+              key={day.shortName}
+              className={clsx("text-center", {
+                "font-bold": currentDayIndex == dayIndex,
+              })}
+            >
+              {day.singleChar}
+            </div>
+          ))}
+        </div>
+
+        {times.map((time) => (
+          <div key={time} className="grid grid-cols-8 gap-1 mb-2">
+            <div
+              className={clsx("mr-2", "text-right tabular-nums", {
+                "font-bold": time == currentHour,
+              })}
+            >
+              <span>{time.toString().padStart(2, "0")}</span>
+              <span className="text-gray-500">:00</span>
+            </div>
+
+            {days.map((day, dayIndex) => {
+              const isNow = dayIndex == currentDayIndex && time == currentHour;
+              return (
+                <div
+                  key={dayIndex}
+                  className={clsx(
+                    `rounded-md ${percentColorClass(
+                      getAveragePercent(dayIndex, time)
+                    )}`,
+                    {
+                      "ring-4 ring-opacity-50 ring-green-500": isNow,
+                    }
+                  )}
+                  onMouseEnter={() =>
+                    setSelectedDayHour({ day: dayIndex, hour: time })
+                  }
+                  // onMouseLeave={(}
+                />
+              );
             })}
-          >
-            {day.singleChar}
           </div>
         ))}
       </div>
 
-      {times.map((time) => (
-        <div key={time} className="grid grid-cols-8 gap-1 mb-2">
-          <div
-            className={clsx("mr-2", "text-right tabular-nums", {
-              "font-bold": time == currentHour,
-            })}
-          >
-            <span>{time.toString().padStart(2, "0")}</span>
-            <span className="text-gray-500">:00</span>
-          </div>
-
-          {days.map((day, dayIndex) => {
-            const isNow = dayIndex == currentDayIndex && time == currentHour;
-            return (
-              <div
-                key={dayIndex}
-                className={clsx(
-                  `rounded-md ${percentColorClass(
-                    getAveragePercent(dayIndex, time)
-                  )}`,
-                  {
-                    "ring-4 ring-opacity-50 ring-green-500": isNow,
-                  }
-                )}
-              />
-            );
-          })}
-        </div>
-      ))}
+      <div className="mt-5 p-4 rounded-lg bg-gray-200">
+        {selectedDayHour ? (
+          <></>
+        ) : (
+          <>
+            <div className="font-medium">
+              Hover on a cell to get more information about the gym on that day
+              and time.
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 };
