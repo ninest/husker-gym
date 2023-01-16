@@ -20,12 +20,17 @@ export default async function SectionPage({
     orderBy: { time: "desc" },
   });
 
+  // TODO: section invalid, show error
+
   return (
     <main className="max-w-[60ch] mx-auto p-5">
       <h1 className="font-black border-b text-3xl mb-2">{section?.name}</h1>
       <div className="mb-3">{section?.description}</div>
 
-      <WeekHeatMap serializedRecords={serializeListWithDate(records, "time")} />
+      <WeekHeatMap
+        section={section!}
+        serializedRecords={serializeListWithDate(records, "time")}
+      />
     </main>
   );
 }

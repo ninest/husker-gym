@@ -1,24 +1,22 @@
 "use client";
 
+import { DayHour } from "@/types";
 import { bostonTime, parseListWithDate } from "@/utils/date";
-import { record } from "@prisma/client";
+import { record, section } from "@prisma/client";
 import clsx from "clsx";
 import { useState } from "react";
 
-interface SelectedDayHour {
-  day: number;
-  hour: number;
-}
-
 export const WeekHeatMap = ({
+  section,
   serializedRecords,
 }: {
+  section: section;
   serializedRecords: record[];
 }) => {
   const records = parseListWithDate(serializedRecords, "time");
 
   // day is 0-indexed
-  const getFilteredRecords = (day: number, hour: number) => {
+  const getFilteredRecords = ({ day, hour }: DayHour) => {
     // Take into account for timezones
     const offsetHours = new Date().getTimezoneOffset() / 60;
     const hourTZ = hour - offsetHours;
@@ -31,13 +29,13 @@ export const WeekHeatMap = ({
     return filteredRecords;
   };
 
-  const getAverageCount = (day: number, hour: number) => {
-    const filteredRecords = getFilteredRecords(day, hour);
+  const getAverageCount = ({ day, hour }: DayHour) => {
+    const filteredRecords = getFilteredRecords({ day, hour });
     const sum = filteredRecords.reduce((acc, rec) => acc + rec.count, 0);
     return sum / filteredRecords.length;
   };
-  const getAveragePercent = (day: number, hour: number) => {
-    const filteredRecords = getFilteredRecords(day, hour);
+  const getAveragePercent = ({ day, hour }: DayHour) => {
+    const filteredRecords = getFilteredRecords({ day, hour });
     const sum = filteredRecords.reduce((acc, rec) => acc + rec.percent, 0);
     return sum / filteredRecords.length;
   };
@@ -60,7 +58,7 @@ export const WeekHeatMap = ({
     { name: "Friday", shortName: "Fri", singleChar: "F" },
     { name: "Saturday", shortName: "Sat", singleChar: "S" },
   ];
-  const times = [
+  const hours = [
     4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
   ];
 
@@ -69,12 +67,14 @@ export const WeekHeatMap = ({
   const currentDayIndex = now.getDay();
   const currentHour = now.getHours();
 
-  const [selectedDayHour, setSelectedDayHour] =
-    useState<SelectedDayHour | null>(null);
+  const [selectedDayHour, setSelectedDayHour] = useState<DayHour | null>(null);
+  const validDataForDayHour = ({ day, hour }: DayHour) => {
+    return !isNaN(getAverageCount({ day, hour }));
+  };
 
   return (
     <div>
-      <div>
+      <div className="mb-5">
         {/* First row, days */}
         <div className="grid grid-cols-8 gap-2 mb-3">
           <div></div>
@@ -82,7 +82,7 @@ export const WeekHeatMap = ({
             <div
               key={day.shortName}
               className={clsx("text-center", {
-                "font-bold": currentDayIndex == dayIndex,
+                "bg-green-200 rounded-md": currentDayIndex == dayIndex,
               })}
             >
               {day.singleChar}
@@ -90,34 +90,33 @@ export const WeekHeatMap = ({
           ))}
         </div>
 
-        {times.map((time) => (
-          <div key={time} className="grid grid-cols-8 gap-1 mb-2">
+        {hours.map((hour) => (
+          <div key={hour} className="grid grid-cols-8 gap-3 mb-3">
             <div
-              className={clsx("mr-2", "text-right tabular-nums", {
-                "font-bold": time == currentHour,
+              className={clsx("", "text-right tabular-nums", {
+                "bg-green-200 rounded-md": hour == currentHour,
               })}
             >
-              <span>{time.toString().padStart(2, "0")}</span>
+              <span>{hour.toString().padStart(2, "0")}</span>
               <span className="text-gray-500">:00</span>
             </div>
 
             {days.map((day, dayIndex) => {
-              const isNow = dayIndex == currentDayIndex && time == currentHour;
+              const isNow = dayIndex == currentDayIndex && hour == currentHour;
               return (
                 <div
                   key={dayIndex}
                   className={clsx(
                     `rounded-md ${percentColorClass(
-                      getAveragePercent(dayIndex, time)
+                      getAveragePercent({ day: dayIndex, hour })
                     )}`,
                     {
-                      "ring-4 ring-opacity-50 ring-green-500": isNow,
+                      "ring-4 ring-green-400": isNow,
                     }
                   )}
                   onMouseEnter={() =>
-                    setSelectedDayHour({ day: dayIndex, hour: time })
+                    setSelectedDayHour({ day: dayIndex, hour: hour })
                   }
-                  // onMouseLeave={(}
                 />
               );
             })}
@@ -125,18 +124,43 @@ export const WeekHeatMap = ({
         ))}
       </div>
 
-      <div className="mt-5 p-4 rounded-lg bg-gray-200">
-        {selectedDayHour ? (
-          <></>
-        ) : (
-          <>
-            <div className="font-medium">
-              Hover on a cell to get more information about the gym on that day
-              and time.
-            </div>
-          </>
-        )}
-      </div>
+      {selectedDayHour ? (
+        <>
+          <div className="p-4 rounded-lg bg-gray-100">
+            {validDataForDayHour(selectedDayHour) ? (
+              <>
+                <div className="font-medium">
+                  On {days[selectedDayHour.day].name} at {selectedDayHour.hour}
+                  :00, {section.name} usually has{" "}
+                  <span className="font-bold">
+                    {getAverageCount(selectedDayHour)} people
+                  </span>{" "}
+                  and is{" "}
+                  <span className="font-bold">
+                    {getAveragePercent(selectedDayHour)}% full
+                  </span>
+                  .
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="font-medium">
+                  There is no valid data for {section.name} on{" "}
+                  {days[selectedDayHour.day].name} at {selectedDayHour.hour}
+                  :00.
+                </div>
+              </>
+            )}
+          </div>
+        </>
+      ) : (
+        <div className="p-4 rounded-lg border-4 border-dashed">
+          <div className="font-medium text-center text-gray-500">
+            Hover on a cell to get more information about the gym on that day
+            and time.
+          </div>
+        </div>
+      )}
     </div>
   );
 };
