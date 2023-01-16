@@ -1,6 +1,16 @@
-import { record } from "@prisma/client";
+"use client";
 
-export const WeekHeatMap = ({ records }: { records: record[] }) => {
+import { bostonTime, parseListWithDate } from "@/utils/date";
+import { record } from "@prisma/client";
+import clsx from "clsx";
+
+export const WeekHeatMap = ({
+  serializedRecords,
+}: {
+  serializedRecords: record[];
+}) => {
+  const records = parseListWithDate(serializedRecords, "time");
+
   // day is 0-indexed
   const getFilteredRecords = (day: number, hour: number) => {
     // Take into account for timezones
@@ -45,16 +55,29 @@ export const WeekHeatMap = ({ records }: { records: record[] }) => {
     { name: "Saturday", shortName: "Sat", singleChar: "S" },
   ];
   const times = [
-    5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+    22, 23,
   ];
+
+  // Highlight current day/time on heatmap
+  const now = new Date();
+  const currentDayIndex = now.getDay();
+  const currentHour = now.getHours();
+
+  console.log(currentDayIndex, currentHour);
 
   return (
     <div>
       {/* First row, days */}
       <div className="grid grid-cols-8 gap-2 mb-3">
         <div></div>
-        {days.map((day) => (
-          <div key={day.shortName} className="text-center">
+        {days.map((day, dayIndex) => (
+          <div
+            key={day.shortName}
+            className={clsx("text-center", {
+              "font-bold": currentDayIndex == dayIndex,
+            })}
+          >
             {day.singleChar}
           </div>
         ))}
@@ -62,19 +85,31 @@ export const WeekHeatMap = ({ records }: { records: record[] }) => {
 
       {times.map((time) => (
         <div key={time} className="grid grid-cols-8 gap-1 mb-2">
-          <div className="text-right tabular-nums">
+          <div
+            className={clsx("mr-2", "text-right tabular-nums", {
+              "font-bold": time == currentHour,
+            })}
+          >
             <span>{time.toString().padStart(2, "0")}</span>
-            <span>:00</span>
+            <span className="text-gray-500">:00</span>
           </div>
 
-          {days.map((day, dayIndex) => (
-            <div
-              key={dayIndex}
-              className={`rounded-md ${percentColorClass(
-                getAveragePercent(dayIndex, time)
-              )}`}
-            />
-          ))}
+          {days.map((day, dayIndex) => {
+            const isNow = dayIndex == currentDayIndex && time == currentHour;
+            return (
+              <div
+                key={dayIndex}
+                className={clsx(
+                  `rounded-md ${percentColorClass(
+                    getAveragePercent(dayIndex, time)
+                  )}`,
+                  {
+                    "ring-4 ring-opacity-50 ring-green-500": isNow,
+                  }
+                )}
+              />
+            );
+          })}
         </div>
       ))}
     </div>

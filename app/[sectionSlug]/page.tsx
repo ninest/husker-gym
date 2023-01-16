@@ -1,4 +1,5 @@
 import { prisma } from "@/db/prisma";
+import { serializeListWithDate } from "@/utils/date";
 import { subWeeks } from "date-fns";
 import { WeekHeatMap } from "./components/WeekHeatMap";
 
@@ -24,7 +25,7 @@ export default async function SectionPage({
       <h1 className="font-black border-b text-3xl mb-2">{section?.name}</h1>
       <div className="mb-3">{section?.description}</div>
 
-      <WeekHeatMap records={records} />
+      <WeekHeatMap serializedRecords={serializeListWithDate(records, "time")} />
     </main>
   );
 }
