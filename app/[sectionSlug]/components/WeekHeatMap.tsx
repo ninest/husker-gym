@@ -1,7 +1,7 @@
 "use client";
 
 import { DayHour } from "@/types";
-import { bostonTime, parseListWithDate } from "@/utils/date";
+import { parseListWithDate } from "@/utils/date";
 import { record, section } from "@prisma/client";
 import clsx from "clsx";
 import { format } from "date-fns";
@@ -19,8 +19,6 @@ export const WeekHeatMap = ({
 
   // day is 0-indexed
   const getFilteredRecords = ({ day, hour }: DayHour) => {
-    console.log({ day, hour });
-
     // Take into account for timezones
     const offsetHours = new Date().getTimezoneOffset() / 60;
     const hourTZ = hour - offsetHours;
@@ -70,8 +68,7 @@ export const WeekHeatMap = ({
     { name: "Saturday", shortName: "Sat", singleChar: "S" },
   ];
   const hours = [
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
-    22, 23, 0,
+    5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0,
   ];
 
   // Highlight current day/time on heatmap
@@ -86,7 +83,7 @@ export const WeekHeatMap = ({
 
   return (
     <div>
-      <div className="mb-5">
+      <div className="mb-3 bg-gray-50 -m-2 p-2 rounded-xl">
         {/* First row, days */}
         <div className="grid grid-cols-8 gap-2 mb-3">
           <div></div>
@@ -105,7 +102,7 @@ export const WeekHeatMap = ({
         {hours.map((hour) => (
           <div key={hour} className="grid grid-cols-8 gap-3 mb-3">
             <div
-              className={clsx("", "text-right tabular-nums", {
+              className={clsx("text-sm text-right tabular-nums", {
                 "bg-green-200 rounded-md": hour == currentHour,
               })}
             >
@@ -115,17 +112,17 @@ export const WeekHeatMap = ({
 
             {days.map((day, dayIndex) => {
               const isNow = dayIndex == currentDayIndex && hour == currentHour;
+              const averagePercentFull = getAveragePercent({
+                day: dayIndex,
+                hour,
+              });
+              const bgClass = percentColorClass(averagePercentFull);
               return (
                 <div
                   key={dayIndex}
-                  className={clsx(
-                    `rounded-md ${percentColorClass(
-                      getAveragePercent({ day: dayIndex, hour })
-                    )}`,
-                    {
-                      "ring-4 ring-green-400": isNow,
-                    }
-                  )}
+                  className={clsx(`rounded-md`, bgClass, {
+                    "ring-4 ring-green-400": isNow,
+                  })}
                   onClick={() =>
                     setSelectedDayHour({ day: dayIndex, hour: hour })
                   }
@@ -185,7 +182,7 @@ export const WeekHeatMap = ({
           </div>
         </>
       ) : (
-        <div className="p-4 rounded-lg border-4 border-dashed">
+        <div className="p-4 rounded-xl border-4 border-dashed">
           <div className="font-medium text-center text-gray-500">
             Click on a cell to get more information about the gym on that day
             and time.

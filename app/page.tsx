@@ -7,12 +7,12 @@ export default async function HomePage() {
   });
 
   return (
-    <main>
+    <main className="max-w-[60ch] mx-auto p-5">
       {gyms.map((gym) => (
-        <section key={gym.id} className="mb-5">
-          <h2 className="font-black border-b text-2xl">{gym.name}</h2>
+        <section key={gym.id} className="mb-8">
+          <h2 className="font-bold text-2xl mb-3">{gym.name}</h2>
 
-          <div className="space-y-2">
+          <div className="space-y-4">
             {gym.sections.map((section) => (
               <SectionSummary key={section.id} id={section.id} />
             ))}

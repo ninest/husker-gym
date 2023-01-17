@@ -14,13 +14,20 @@ export const SectionSummary = async ({ id }: { id: number }) => {
   });
 
   return (
-    <Link href={`/${section?.slug}`}>
-      <h3 className="font-bold">{section?.name}</h3>
-      <div>{section?.description}</div>
-      <div>
-        Current count: {latestRecord?.count}, {latestRecord?.percent}% full
+    <Link
+      href={`/${section?.slug}`}
+      className="block rounded-md p-3 bg-gray-50 hover:bg-gray-100"
+    >
+      <div className="flex justify-between">
+        <div>
+          <h3 className="font-bold">{section?.name}</h3>
+          <div className="font-light">{section?.description}</div>
+        </div>
+        <div className="text-right">
+          <div>{latestRecord?.count} people</div>
+          <div>{latestRecord?.percent}% full</div>
+        </div>
       </div>
-      <div>{lastUpdated(latestRecord?.time!)}</div>
     </Link>
   );
 };

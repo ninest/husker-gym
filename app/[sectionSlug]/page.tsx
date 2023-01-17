@@ -24,7 +24,7 @@ export default async function SectionPage({
 
   return (
     <main className="max-w-[60ch] mx-auto p-5">
-      <h1 className="font-black border-b text-3xl mb-2">{section?.name}</h1>
+      <h1 className="font-bold text-2xl mb-3">{section?.name}</h1>
       <div className="mb-3">{section?.description}</div>
 
       <WeekHeatMap
