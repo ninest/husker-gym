@@ -18,10 +18,13 @@ export const SectionSummary = async ({ id }: { id: number }) => {
       href={`/${section?.slug}`}
       className="block rounded-md p-3 bg-gray-50 hover:bg-gray-100"
     >
-      <div className="flex justify-between">
+      <div className="flex justify-between items-center">
         <div>
           <h3 className="font-bold">{section?.name}</h3>
-          <div className="font-light">{section?.description}</div>
+          {/* <div className="">{section?.description}</div> */}
+          <div className="text-sm text-gray-500">
+            {lastUpdated(latestRecord?.time!)}
+          </div>
         </div>
         <div className="text-right">
           <div>{latestRecord?.count} people</div>
