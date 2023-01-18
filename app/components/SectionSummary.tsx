@@ -21,7 +21,6 @@ export const SectionSummary = async ({ id }: { id: number }) => {
       <div className="flex justify-between items-center">
         <div>
           <h3 className="font-bold">{section?.name}</h3>
-          {/* <div className="">{section?.description}</div> */}
           <div className="text-sm text-gray-500">
             {lastUpdated(latestRecord?.time!)}
           </div>

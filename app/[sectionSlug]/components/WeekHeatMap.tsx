@@ -1,7 +1,7 @@
 "use client";
 
 import { DayHour } from "@/types";
-import { parseListWithDate } from "@/utils/date";
+import { bostonTime, parseListWithDate, utcToEst } from "@/utils/date";
 import { record, section } from "@prisma/client";
 import clsx from "clsx";
 import { format } from "date-fns";
@@ -11,11 +11,16 @@ import { useState } from "react";
 export const WeekHeatMap = ({
   section,
   serializedRecords,
+  today,
 }: {
   section: section;
   serializedRecords: record[];
+  today: DayHour;
 }) => {
-  const records = parseListWithDate(serializedRecords, "time");
+  // Convert UTC to EST client side
+  const records = parseListWithDate(serializedRecords, "time").map(
+    (record) => ({ ...record, time: utcToEst(record.time) })
+  );
 
   // day is 0-indexed
   const getFilteredRecords = ({ day, hour }: DayHour) => {
@@ -68,13 +73,9 @@ export const WeekHeatMap = ({
     { name: "Saturday", shortName: "Sat", singleChar: "S" },
   ];
   const hours = [
-    5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0,
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+    22, 23, 0,
   ];
-
-  // Highlight current day/time on heatmap
-  const now = new Date();
-  const currentDayIndex = now.getDay();
-  const currentHour = now.getHours();
 
   const [selectedDayHour, setSelectedDayHour] = useState<DayHour | null>(null);
   const validDataForDayHour = ({ day, hour }: DayHour) => {
@@ -91,7 +92,7 @@ export const WeekHeatMap = ({
             <div
               key={day.shortName}
               className={clsx("text-center", {
-                "bg-green-200 rounded-md": currentDayIndex == dayIndex,
+                "bg-green-200 rounded-md": today.day == dayIndex,
               })}
             >
               {day.singleChar}
@@ -103,7 +104,7 @@ export const WeekHeatMap = ({
           <div key={hour} className="grid grid-cols-8 gap-3 mb-3">
             <div
               className={clsx("text-sm text-right tabular-nums", {
-                "bg-green-200 rounded-md": hour == currentHour,
+                "bg-green-200 rounded-md": today.hour == hour,
               })}
             >
               <span>{hour.toString().padStart(2, "0")}</span>
@@ -111,7 +112,7 @@ export const WeekHeatMap = ({
             </div>
 
             {days.map((day, dayIndex) => {
-              const isNow = dayIndex == currentDayIndex && hour == currentHour;
+              const isNow = dayIndex == today.day && hour == today.hour;
               const averagePercentFull = getAveragePercent({
                 day: dayIndex,
                 hour,

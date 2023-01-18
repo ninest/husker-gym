@@ -1,5 +1,5 @@
 import { prisma } from "@/db/prisma";
-import { serializeListWithDate } from "@/utils/date";
+import { getUtcToEstDayHour, serializeListWithDate } from "@/utils/date";
 import { subWeeks } from "date-fns";
 import { WeekHeatMap } from "./components/WeekHeatMap";
 
@@ -22,6 +22,8 @@ export default async function SectionPage({
 
   // TODO: section invalid, show error
 
+  const today = getUtcToEstDayHour(new Date());
+
   return (
     <main className="max-w-[60ch] mx-auto p-5">
       <h1 className="font-bold text-2xl mb-3">{section?.name}</h1>
@@ -30,6 +32,7 @@ export default async function SectionPage({
       <WeekHeatMap
         section={section!}
         serializedRecords={serializeListWithDate(records, "time")}
+        today={today}
       />
     </main>
   );
