@@ -3,6 +3,8 @@ import { getUtcToEstDayHour, serializeListWithDate } from "@/utils/date";
 import { subWeeks } from "date-fns";
 import { WeekHeatMap } from "./components/WeekHeatMap";
 
+export const revalidate = 60; // revalidate this page every 60 seconds
+
 export default async function SectionPage({
   params,
 }: {
