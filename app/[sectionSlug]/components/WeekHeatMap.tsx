@@ -99,44 +99,45 @@ export const WeekHeatMap = ({
             </div>
           ))}
         </div>
+        <div className="space-y-3">
+          {hours.map((hour) => (
+            <div key={hour} className="grid grid-cols-8 gap-3">
+              <div
+                className={clsx("text-sm text-right tabular-nums", {
+                  "bg-green-200 rounded-md": today.hour == hour,
+                })}
+              >
+                <span>{hour.toString().padStart(2, "0")}</span>
+                <span className="text-gray-500">:00</span>
+              </div>
 
-        {hours.map((hour) => (
-          <div key={hour} className="grid grid-cols-8 gap-3 mb-3">
-            <div
-              className={clsx("text-sm text-right tabular-nums", {
-                "bg-green-200 rounded-md": today.hour == hour,
+              {days.map((day, dayIndex) => {
+                const isNow = dayIndex == today.day && hour == today.hour;
+                const averagePercentFull = getAveragePercent({
+                  day: dayIndex,
+                  hour,
+                });
+                const bgClass = percentColorClass(averagePercentFull);
+                return (
+                  <div
+                    key={dayIndex}
+                    className={clsx(`rounded-md`, bgClass, {
+                      "ring-4 ring-green-400": isNow,
+                    })}
+                    onClick={() =>
+                      setSelectedDayHour({ day: dayIndex, hour: hour })
+                    }
+                  />
+                );
               })}
-            >
-              <span>{hour.toString().padStart(2, "0")}</span>
-              <span className="text-gray-500">:00</span>
             </div>
-
-            {days.map((day, dayIndex) => {
-              const isNow = dayIndex == today.day && hour == today.hour;
-              const averagePercentFull = getAveragePercent({
-                day: dayIndex,
-                hour,
-              });
-              const bgClass = percentColorClass(averagePercentFull);
-              return (
-                <div
-                  key={dayIndex}
-                  className={clsx(`rounded-md`, bgClass, {
-                    "ring-4 ring-green-400": isNow,
-                  })}
-                  onClick={() =>
-                    setSelectedDayHour({ day: dayIndex, hour: hour })
-                  }
-                />
-              );
-            })}
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       {selectedDayHour ? (
         <>
-          <div className="p-4 rounded-lg bg-gray-100">
+          <div className="">
             {validDataForDayHour(selectedDayHour) ? (
               <>
                 <div className="space-y-3">
