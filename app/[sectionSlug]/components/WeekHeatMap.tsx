@@ -91,7 +91,7 @@ export const WeekHeatMap = ({
     <div>
       <div className="mb-8 bg-gray-50 -m-2 p-2 rounded-xl">
         {/* First row, days */}
-        <div className="grid grid-cols-8 gap-2 mb-3">
+        <div className="grid grid-cols-week gap-2 mb-3">
           <div></div>
           {days.map((day, dayIndex) => (
             <div
@@ -106,14 +106,12 @@ export const WeekHeatMap = ({
         </div>
         <div className="space-y-2">
           {hours.map((hour) => (
-            <div key={hour} className="grid grid-cols-8 gap-3">
+            <div key={hour} className="grid grid-cols-week gap-2">
               <div
-                className={clsx("text-sm text-center tabular-nums", {
+                className={clsx("text-sm text-right pr-1 tabular-nums", {
                   "bg-green-200 rounded-md": today.hour == hour,
                 })}
               >
-                {/* <span>{hour.toString().padStart(2, "0")}</span>
-                <span className="text-gray-500">:00</span> */}
                 {twentyFourHourToAMPMHour(hour)}
               </div>
 

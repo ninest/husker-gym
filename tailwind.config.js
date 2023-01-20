@@ -10,6 +10,10 @@ module.exports = {
       fontFamily: {
         sans: ["var(--font-inter)"],
       },
+      gridTemplateColumns: {
+        // Week view grid
+        week: "minmax(50px,1fr) 1fr 1fr 1fr 1fr 1fr 1fr 1fr",
+      },
     },
   },
   plugins: [],
