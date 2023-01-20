@@ -3,7 +3,7 @@ import { getUtcToEstDayHour, serializeListWithDate } from "@/utils/date";
 import { subWeeks } from "date-fns";
 import { WeekHeatMap } from "./components/WeekHeatMap";
 
-export const revalidate = 60; // revalidate this page every 60 seconds
+export const revalidate = 0; // no cache
 
 export default async function SectionPage({
   params,
@@ -28,8 +28,8 @@ export default async function SectionPage({
 
   return (
     <main className="max-w-[60ch] mx-auto p-5">
-      <h1 className="font-bold text-2xl mb-3">{section?.name}</h1>
-      <div className="mb-3">{section?.description}</div>
+      <h1 className="font-bold text-2xl mb-2">{section?.name}</h1>
+      <div className="mb-8">{section?.description}</div>
 
       <WeekHeatMap
         section={section!}

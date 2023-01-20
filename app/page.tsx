@@ -1,7 +1,7 @@
 import { prisma } from "@/db/prisma";
 import { SectionSummary } from "./components/SectionSummary";
 
-export const revalidate = 60; // revalidate this page every 60 seconds
+export const revalidate = 0; // no cache
 
 export default async function HomePage() {
   const gyms = await prisma.gym.findMany({

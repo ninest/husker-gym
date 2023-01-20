@@ -27,16 +27,38 @@ export const lastUpdated = (date: Date): string => {
   return `Last updated ${relativeTimeBack} back`;
 };
 
+// type HasDate<key extends string> = {
+//   [x: string]: any;
+//   [y: key]: Date
+// };
+// type TransformDateToString<T extends HasDate> = {
+//   [x: keyof T]: T[typeof x] extends Date ? string : T[typeof x];
+// }
 export const serializeListWithDate = <T>(list: T[], dateKey: string): T[] => {
   return list.map((item: any) => ({
     ...item,
     [dateKey]: (item[dateKey] as Date).toString(),
   }));
 };
+// export const serializeListWithDate = <HasDate>(list: HasDate[], dateKey: string): HasDate[] => {
+//   return list.map((item) => ({
+//     ...item,
+//     [dateKey]: (item[dateKey] as Date).toString(),
+//   }));
+// };
 
 export const parseListWithDate = <T>(list: T[], dateKey: string): T[] => {
   return list.map((item: any) => ({
     ...item,
     [dateKey]: new Date(item[dateKey]),
   }));
+};
+
+// Need better name
+export const twentyFourHourToAMPMHour = (hour: number): string => {
+  if (hour > 12) {
+    return `${hour - 12} PM`;
+  } else {
+    return `${hour} AM`;
+  }
 };

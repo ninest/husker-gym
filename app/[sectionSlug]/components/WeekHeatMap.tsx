@@ -1,7 +1,12 @@
 "use client";
 
 import { DayHour } from "@/types";
-import { bostonTime, parseListWithDate, utcToEst } from "@/utils/date";
+import {
+  bostonTime,
+  parseListWithDate,
+  twentyFourHourToAMPMHour,
+  utcToEst,
+} from "@/utils/date";
 import { record, section } from "@prisma/client";
 import clsx from "clsx";
 import { format } from "date-fns";
@@ -73,8 +78,8 @@ export const WeekHeatMap = ({
     { name: "Saturday", shortName: "Sat", singleChar: "S" },
   ];
   const hours = [
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
-    22, 23, 0,
+    /* 0, 1, 2, 3, 4, */ 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    20, 21, 22, 23,
   ];
 
   const [selectedDayHour, setSelectedDayHour] = useState<DayHour | null>(null);
@@ -84,7 +89,7 @@ export const WeekHeatMap = ({
 
   return (
     <div>
-      <div className="mb-3 bg-gray-50 -m-2 p-2 rounded-xl">
+      <div className="mb-8 bg-gray-50 -m-2 p-2 rounded-xl">
         {/* First row, days */}
         <div className="grid grid-cols-8 gap-2 mb-3">
           <div></div>
@@ -99,16 +104,17 @@ export const WeekHeatMap = ({
             </div>
           ))}
         </div>
-        <div className="space-y-3">
+        <div className="space-y-2">
           {hours.map((hour) => (
             <div key={hour} className="grid grid-cols-8 gap-3">
               <div
-                className={clsx("text-sm text-right tabular-nums", {
+                className={clsx("text-sm text-center tabular-nums", {
                   "bg-green-200 rounded-md": today.hour == hour,
                 })}
               >
-                <span>{hour.toString().padStart(2, "0")}</span>
-                <span className="text-gray-500">:00</span>
+                {/* <span>{hour.toString().padStart(2, "0")}</span>
+                <span className="text-gray-500">:00</span> */}
+                {twentyFourHourToAMPMHour(hour)}
               </div>
 
               {days.map((day, dayIndex) => {
@@ -174,7 +180,7 @@ export const WeekHeatMap = ({
               </>
             ) : (
               <>
-                <div className="font-medium">
+                <div className="">
                   There is no valid data for {section.name} on{" "}
                   {days[selectedDayHour.day].name} at {selectedDayHour.hour}
                   :00.
