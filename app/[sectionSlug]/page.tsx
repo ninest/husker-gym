@@ -35,15 +35,15 @@ export default async function SectionPage({ params }: SectionPageProps) {
       <h1 className="font-bold text-2xl mb-2">{section?.name}</h1>
       <div className="mb-8">{section?.description}</div>
 
-      {/* <div className="mb-8">
-        <DayBarChart serializedRecords={serializedRecords} />
-      </div> */}
+      <div className="mb-8">
+        <DayBarChart serializedRecords={serializedRecords} today={today} />
+      </div>
 
-      <WeekHeatMap
+      {/* <WeekHeatMap
         section={section!}
         serializedRecords={serializedRecords}
         today={today}
-      />
+      /> */}
     </main>
   );
 }
