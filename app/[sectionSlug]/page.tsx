@@ -1,6 +1,7 @@
 import { prisma } from "@/db/prisma";
 import { getUtcToEstDayHour, serializeListWithDate } from "@/utils/date";
-import { subWeeks } from "date-fns";
+import { addHours, subWeeks } from "date-fns";
+import { addDays } from "date-fns/esm";
 import { WeekHeatMap } from "./components/WeekHeatMap";
 
 export const revalidate = 0; // no cache
@@ -17,7 +18,7 @@ export default async function SectionPage({
     where: {
       section_id: section?.id,
       // By default, use data from the past three weeks in calculation
-      time: { lte: new Date(), gte: subWeeks(new Date(), 3) },
+      time: { lte: addDays(new Date(), 1), gte: subWeeks(new Date(), 3) },
     },
     orderBy: { time: "desc" },
   });

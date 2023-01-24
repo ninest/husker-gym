@@ -2,10 +2,9 @@
 
 import { DayHour } from "@/types";
 import {
-  bostonTime,
   parseListWithDate,
   twentyFourHourToAMPMHour,
-  utcToEst,
+  utcToEst
 } from "@/utils/date";
 import { record, section } from "@prisma/client";
 import clsx from "clsx";

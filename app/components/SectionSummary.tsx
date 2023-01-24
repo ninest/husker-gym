@@ -23,7 +23,7 @@ export const SectionSummary = async ({ id }: { id: number }) => {
   return (
     <Link
       href={`/${section?.slug}`}
-      className="block rounded-md p-3 bg-gray-50 hover:bg-gray-100"
+      className="block rounded-lg p-3 bg-gray-50 hover:bg-gray-100"
     >
       <div className="flex justify-between items-center">
         <div>
