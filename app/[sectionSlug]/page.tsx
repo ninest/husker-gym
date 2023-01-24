@@ -1,5 +1,9 @@
 import { prisma } from "@/db/prisma";
-import { getUtcToEstDayHour, serializeListWithDate } from "@/utils/date";
+import {
+  getUtcToEstDayHour,
+  serializeListWithDate,
+  utcToEst,
+} from "@/utils/date";
 import { subWeeks } from "date-fns";
 import { addDays } from "date-fns/esm";
 import { DayBarChart } from "./components/DayBarChart";
@@ -15,20 +19,24 @@ export default async function SectionPage({ params }: SectionPageProps) {
   const section = await prisma.section.findFirst({
     where: { slug: params.sectionSlug },
   });
-  const records = await prisma.record.findMany({
-    where: {
-      section_id: section?.id,
-      // By default, use data from the past three weeks in calculation
-      time: { lte: addDays(new Date(), 1), gte: subWeeks(new Date(), 3) },
-    },
-    orderBy: { time: "desc" },
-  });
+  const records = (
+    await prisma.record.findMany({
+      where: {
+        section_id: section?.id,
+        // By default, use data from the past three weeks in calculation
+        time: { lte: addDays(new Date(), 1), gte: subWeeks(new Date(), 3) },
+      },
+      orderBy: { time: "desc" },
+    })
+  )
+    // Convert UTC to EST, though there's probably a better way to do this
+    .map((record) => ({ ...record, time: utcToEst(record.time) }));
 
   // TODO: section invalid, show error
 
   const today = getUtcToEstDayHour(new Date());
-
   const serializedRecords = serializeListWithDate(records, "time");
+  
 
   return (
     <main className="max-w-[60ch] mx-auto p-5">
@@ -39,11 +47,11 @@ export default async function SectionPage({ params }: SectionPageProps) {
         <DayBarChart serializedRecords={serializedRecords} today={today} />
       </div>
 
-      {/* <WeekHeatMap
+      <WeekHeatMap
         section={section!}
         serializedRecords={serializedRecords}
         today={today}
-      /> */}
+      />
     </main>
   );
 }

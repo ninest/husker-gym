@@ -27,10 +27,7 @@ export const WeekHeatMap = ({
   serializedRecords,
   today,
 }: WeekHeatMapProps) => {
-  // Convert UTC to EST client side
-  const records = parseListWithDate(serializedRecords, "time").map(
-    (record) => ({ ...record, time: utcToEst(record.time) })
-  );
+  const records = parseListWithDate(serializedRecords, "time");
 
   const percentColorClass = (percent: number) => {
     if (percent < 20) return "bg-blue-100";
