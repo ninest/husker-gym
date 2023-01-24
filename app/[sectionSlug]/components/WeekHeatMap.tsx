@@ -4,59 +4,33 @@ import { DayHour } from "@/types";
 import {
   parseListWithDate,
   twentyFourHourToAMPMHour,
-  utcToEst
+  utcToEst,
 } from "@/utils/date";
+import {
+  getFilteredRecords,
+  getAverageCount,
+  getAveragePercent,
+} from "@/utils/records";
 import { record, section } from "@prisma/client";
 import clsx from "clsx";
 import { format } from "date-fns";
-import { addHours } from "date-fns/esm";
 import { useState } from "react";
+
+interface WeekHeatMapProps {
+  section: section;
+  serializedRecords: record[];
+  today: DayHour;
+}
 
 export const WeekHeatMap = ({
   section,
   serializedRecords,
   today,
-}: {
-  section: section;
-  serializedRecords: record[];
-  today: DayHour;
-}) => {
+}: WeekHeatMapProps) => {
   // Convert UTC to EST client side
   const records = parseListWithDate(serializedRecords, "time").map(
     (record) => ({ ...record, time: utcToEst(record.time) })
   );
-
-  // day is 0-indexed
-  const getFilteredRecords = ({ day, hour }: DayHour) => {
-    // Take into account for timezones
-    const offsetHours = new Date().getTimezoneOffset() / 60;
-    const hourTZ = hour - offsetHours;
-    // const hourTZ = hour;
-    const filteredRecords = records.filter(
-      (record) =>
-        record.time.getDay() === day &&
-        record.time.getHours() >= hourTZ &&
-        record.time.getHours() < hourTZ + 1
-    );
-
-    // Add offsetHours to each record
-    const offsetRecords = filteredRecords.map((record) => ({
-      ...record,
-      time: addHours(record.time, offsetHours),
-    }));
-    return offsetRecords;
-  };
-
-  const getAverageCount = ({ day, hour }: DayHour) => {
-    const filteredRecords = getFilteredRecords({ day, hour });
-    const sum = filteredRecords.reduce((acc, rec) => acc + rec.count, 0);
-    return sum / filteredRecords.length;
-  };
-  const getAveragePercent = ({ day, hour }: DayHour) => {
-    const filteredRecords = getFilteredRecords({ day, hour });
-    const sum = filteredRecords.reduce((acc, rec) => acc + rec.percent, 0);
-    return sum / filteredRecords.length;
-  };
 
   const percentColorClass = (percent: number) => {
     if (percent < 20) return "bg-blue-100";
@@ -83,7 +57,7 @@ export const WeekHeatMap = ({
 
   const [selectedDayHour, setSelectedDayHour] = useState<DayHour | null>(null);
   const validDataForDayHour = ({ day, hour }: DayHour) => {
-    return !isNaN(getAverageCount({ day, hour }));
+    return !isNaN(getAverageCount({ records, day, hour }));
   };
 
   return (
@@ -117,6 +91,7 @@ export const WeekHeatMap = ({
               {days.map((day, dayIndex) => {
                 const isNow = dayIndex == today.day && hour == today.hour;
                 const averagePercentFull = getAveragePercent({
+                  records,
                   day: dayIndex,
                   hour,
                 });
@@ -149,29 +124,33 @@ export const WeekHeatMap = ({
                     {selectedDayHour.hour}
                     :00, {section.name} usually has{" "}
                     <span className="font-bold">
-                      {getAverageCount(selectedDayHour)} people
+                      {getAverageCount({ records, ...selectedDayHour })} people
                     </span>{" "}
                     and is{" "}
                     <span className="font-bold">
-                      {getAveragePercent(selectedDayHour)}% full
+                      {getAveragePercent({ records, ...selectedDayHour })}% full
                     </span>
                     .
                   </p>
 
                   <p className="">In the past weeks,</p>
                   <ul className="text-sm list-disc list-outside ml-5">
-                    {getFilteredRecords(selectedDayHour).map((record) => (
-                      <li>
-                        On {format(record.time, "EEEE, LLLL d 'at' HH:mm")},{" "}
-                        {section.name} had{" "}
-                        <span className="font-bold">{record.count} people</span>{" "}
-                        and was{" "}
-                        <span className="font-bold">
-                          {record.percent}% full
-                        </span>
-                        .
-                      </li>
-                    ))}
+                    {getFilteredRecords({ records, ...selectedDayHour }).map(
+                      (record) => (
+                        <li>
+                          On {format(record.time, "EEEE, LLLL d 'at' HH:mm")},{" "}
+                          {section.name} had{" "}
+                          <span className="font-bold">
+                            {record.count} people
+                          </span>{" "}
+                          and was{" "}
+                          <span className="font-bold">
+                            {record.percent}% full
+                          </span>
+                          .
+                        </li>
+                      )
+                    )}
                   </ul>
                 </div>
               </>

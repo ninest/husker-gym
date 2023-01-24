@@ -1,17 +1,17 @@
 import { prisma } from "@/db/prisma";
 import { getUtcToEstDayHour, serializeListWithDate } from "@/utils/date";
-import { addHours, subWeeks } from "date-fns";
+import { subWeeks } from "date-fns";
 import { addDays } from "date-fns/esm";
 import { DayBarChart } from "./components/DayBarChart";
 import { WeekHeatMap } from "./components/WeekHeatMap";
 
 export const revalidate = 0; // no cache
 
-export default async function SectionPage({
-  params,
-}: {
+interface SectionPageProps {
   params: { sectionSlug: string };
-}) {
+}
+
+export default async function SectionPage({ params }: SectionPageProps) {
   const section = await prisma.section.findFirst({
     where: { slug: params.sectionSlug },
   });
@@ -28,20 +28,22 @@ export default async function SectionPage({
 
   const today = getUtcToEstDayHour(new Date());
 
+  const serializedRecords = serializeListWithDate(records, "time");
+
   return (
     <main className="max-w-[60ch] mx-auto p-5">
       <h1 className="font-bold text-2xl mb-2">{section?.name}</h1>
       <div className="mb-8">{section?.description}</div>
 
-      <div className="mb-8">
-        <DayBarChart />
-      </div>
+      {/* <div className="mb-8">
+        <DayBarChart serializedRecords={serializedRecords} />
+      </div> */}
 
-      {/* <WeekHeatMap
+      <WeekHeatMap
         section={section!}
-        serializedRecords={serializeListWithDate(records, "time")}
+        serializedRecords={serializedRecords}
         today={today}
-      /> */}
+      />
     </main>
   );
 }

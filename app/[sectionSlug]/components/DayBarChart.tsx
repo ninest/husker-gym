@@ -1,16 +1,32 @@
 "use client";
 
+import {
+  parseListWithDate,
+  twentyFourHourToShortAMPMHour,
+  utcToEst,
+} from "@/utils/date";
+import { record } from "@prisma/client";
+import { axisBottom } from "d3-axis";
 import { scaleBand, scaleLinear } from "d3-scale";
 import useMeasure from "react-use-measure";
-import { axisBottom } from "d3-axis";
-import { select } from "d3-selection";
-import { twentyFourHourToAMPMHour, twentyFourHourToShortAMPMHour } from "@/utils/date";
 
-export const DayBarChart = () => {
+interface DayBarChartProps {
+  serializedRecords: record[];
+}
+
+export const DayBarChart = ({ serializedRecords }: DayBarChartProps) => {
   const [ref, bounds] = useMeasure();
+  const records = parseListWithDate(serializedRecords, "time").map(
+    (record) => ({ ...record, time: utcToEst(record.time) })
+  );
+
   return (
     <div className="relative w-full h-96" ref={ref}>
-      <DayBarChartInner width={bounds.width} height={bounds.height} />
+      <DayBarChartInner
+        records={records}
+        width={bounds.width}
+        height={bounds.height}
+      />
     </div>
   );
 };
@@ -18,9 +34,11 @@ export const DayBarChart = () => {
 const DayBarChartInner = ({
   width,
   height,
+  records,
 }: {
   width: number;
   height: number;
+  records: record[];
 }) => {
   const margin = { top: 10, bottom: 20, left: 10, right: 10 };
   const xMax = width - margin.left - margin.right;
@@ -66,35 +84,40 @@ const DayBarChartInner = ({
   return (
     <svg width={width} height={height}>
       {/* Bars */}
-        {data.map((d) => {
-          const x = getX(d);
-          const barWidth = xScale.bandwidth();
-          const barHeight = yMax - yScale(getY(d) ?? 0);
-          const barX = xScale(getX(d));
-          const barY = yMax - barHeight;
+      {data.map((d) => {
+        const x = getX(d);
+        const barWidth = xScale.bandwidth();
+        const barHeight = yMax - yScale(getY(d) ?? 0);
+        const barX = xScale(getX(d));
+        const barY = yMax - barHeight;
 
-          // show xaxis tick
-          const showTime = xTicks.includes(x);
+        // show xaxis tick
+        const showTime = xTicks.includes(x);
 
-          return (
-            <g key={x}>
-              <rect
-                rx={6}
-                x={barX}
-                y={barY}
-                width={barWidth}
-                height={barHeight}
-                fill="rgba(0,0,0,0.1)"
-              />
+        return (
+          <g key={x}>
+            <rect
+              rx={6}
+              x={barX}
+              y={barY}
+              width={barWidth}
+              height={barHeight}
+              fill="rgba(0,0,0,0.1)"
+            />
 
-              {showTime && (
-                <text className="text-sm font-medium text-gray-400 fill-current" x={barX + barWidth / 2} y={height-10} textAnchor="middle">
-                  {twentyFourHourToShortAMPMHour(x)}
-                </text>
-              )}
-            </g>
-          );
-        })}
+            {showTime && (
+              <text
+                className="text-sm font-medium text-gray-400 fill-current"
+                x={barX + barWidth / 2}
+                y={height - 10}
+                textAnchor="middle"
+              >
+                {twentyFourHourToShortAMPMHour(x)}
+              </text>
+            )}
+          </g>
+        );
+      })}
     </svg>
   );
 };
