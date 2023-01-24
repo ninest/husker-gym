@@ -1,5 +1,5 @@
 import { prisma } from "@/db/prisma";
-import { bostonTime, lastUpdated } from "@/utils/date";
+import { lastUpdated } from "@/utils/date";
 import Link from "next/link";
 
 export const SectionSummary = async ({ id }: { id: number }) => {

@@ -55,10 +55,21 @@ export const parseListWithDate = <T>(list: T[], dateKey: string): T[] => {
 };
 
 // Need better name
+// 17 -> 5 PM
 export const twentyFourHourToAMPMHour = (hour: number): string => {
   if (hour > 12) {
     return `${hour - 12} PM`;
   } else {
     return `${hour} AM`;
+  }
+};
+
+// Need better name
+// 17 -> 5p
+export const twentyFourHourToShortAMPMHour = (hour: number): string => {
+  if (hour > 12) {
+    return `${hour - 12}p`;
+  } else {
+    return `${hour}a`;
   }
 };
