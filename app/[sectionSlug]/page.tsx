@@ -8,6 +8,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "../../components/ui/Tabs";
+import { BackButton } from "@/components/BackButton";
 
 export const revalidate = 0; // no cache
 
@@ -29,8 +30,9 @@ export default async function SectionPage({ params }: SectionPageProps) {
   const serializedRecords = serializeListWithDate(records, "time");
 
   return (
-    <main className="max-w-[60ch] mx-auto p-5">
-      <h1 className="font-bold text-2xl mb-2">{section?.name}</h1>
+    <main className="max-w-[60ch] mx-auto p-7">
+      <BackButton text="Gyms" />
+      <h1 className="mt-4 font-bold text-2xl mb-2">{section?.name}</h1>
       <div className="mb-4">{section?.description}</div>
 
       <Tabs defaultValue="day">

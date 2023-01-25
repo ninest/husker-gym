@@ -75,7 +75,10 @@ const DayBarChartInner = ({
     .padding(0.15);
 
   const maxPercent = Math.max(...data.map(getY), livePercent);
-  const yScale = scaleLinear().range([yMax, 0]).domain([0, maxPercent]);
+  const yScale = scaleLinear()
+    .range([yMax, 0])
+    // Make chart a little taller than highest percent
+    .domain([0, maxPercent + 10]);
 
   const xTicks = [6, 9, 12, 15, 18, 21];
 
