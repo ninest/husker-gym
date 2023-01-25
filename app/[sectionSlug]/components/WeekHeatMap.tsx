@@ -1,15 +1,14 @@
 "use client";
 
+import { DAYS, HOURS, twentyFourHourToAMPMHour } from "@/date/display";
+import {
+  parseListWithDate
+} from "@/date/utils";
+import { getHourColorFromPercent } from "@/style/colors";
 import { DayHour } from "@/types";
 import {
-  parseListWithDate,
-  twentyFourHourToAMPMHour,
-  utcToEst,
-} from "@/utils/date";
-import {
-  getFilteredRecords,
   getAverageCount,
-  getAveragePercent,
+  getAveragePercent, getFilteredRecords
 } from "@/utils/records";
 import { record, section } from "@prisma/client";
 import clsx from "clsx";
@@ -29,29 +28,6 @@ export const WeekHeatMap = ({
 }: WeekHeatMapProps) => {
   const records = parseListWithDate(serializedRecords, "time");
 
-  const percentColorClass = (percent: number) => {
-    if (percent < 20) return "bg-blue-100";
-    else if (percent < 40) return "bg-blue-300";
-    else if (percent < 60) return "bg-blue-500";
-    else if (percent < 80) return "bg-blue-700";
-    else if (percent >= 80) return "bg-blue-900";
-    else return "";
-  };
-
-  const days = [
-    { name: "Sunday", shortName: "Sun", singleChar: "S" },
-    { name: "Monday", shortName: "Mon", singleChar: "M" },
-    { name: "Tuesday", shortName: "Tue", singleChar: "T" },
-    { name: "Wednesday", shortName: "Wed", singleChar: "W" },
-    { name: "Thursday", shortName: "Thu", singleChar: "R" },
-    { name: "Friday", shortName: "Fri", singleChar: "F" },
-    { name: "Saturday", shortName: "Sat", singleChar: "S" },
-  ];
-  const hours = [
-    /* 0, 1, 2, 3, 4, */ 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-    20, 21, 22, 23,
-  ];
-
   const [selectedDayHour, setSelectedDayHour] = useState<DayHour | null>(null);
   const validDataForDayHour = ({ day, hour }: DayHour) => {
     return !isNaN(getAverageCount({ records, day, hour }));
@@ -63,7 +39,7 @@ export const WeekHeatMap = ({
         {/* First row, days */}
         <div className="grid grid-cols-week gap-2 mb-3">
           <div></div>
-          {days.map((day, dayIndex) => (
+          {DAYS.map((day, dayIndex) => (
             <div
               key={day.shortName}
               className={clsx("text-center", {
@@ -75,7 +51,7 @@ export const WeekHeatMap = ({
           ))}
         </div>
         <div className="space-y-2">
-          {hours.map((hour) => (
+          {HOURS.map((hour) => (
             <div key={hour} className="grid grid-cols-week gap-2">
               <div
                 className={clsx("text-sm text-right pr-1 tabular-nums", {
@@ -85,14 +61,14 @@ export const WeekHeatMap = ({
                 {twentyFourHourToAMPMHour(hour)}
               </div>
 
-              {days.map((day, dayIndex) => {
+              {DAYS.map((day, dayIndex) => {
                 const isNow = dayIndex == today.day && hour == today.hour;
                 const averagePercentFull = getAveragePercent({
                   records,
                   day: dayIndex,
                   hour,
                 });
-                const bgClass = percentColorClass(averagePercentFull);
+                const bgClass = getHourColorFromPercent(averagePercentFull);
                 return (
                   <div
                     key={dayIndex}
@@ -117,7 +93,7 @@ export const WeekHeatMap = ({
               <>
                 <div className="space-y-3">
                   <p className="">
-                    On {days[selectedDayHour.day].name} at{" "}
+                    On {DAYS[selectedDayHour.day].name} at{" "}
                     {selectedDayHour.hour}
                     :00, {section.name} usually has{" "}
                     <span className="font-bold">
@@ -155,7 +131,7 @@ export const WeekHeatMap = ({
               <>
                 <div className="">
                   There is no valid data for {section.name} on{" "}
-                  {days[selectedDayHour.day].name} at {selectedDayHour.hour}
+                  {DAYS[selectedDayHour.day].name} at {selectedDayHour.hour}
                   :00.
                 </div>
               </>

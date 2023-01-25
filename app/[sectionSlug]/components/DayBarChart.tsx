@@ -1,12 +1,9 @@
 "use client";
 
-import { BAR_CHART_COLORS } from "@/style/colors";
+import { HOURS, twentyFourHourToShortAMPMHour } from "@/date/display";
+import { parseListWithDate } from "@/date/utils";
+import { BAR_CHART_COLORS, getBarColorFromPercent } from "@/style/colors";
 import { DayHour } from "@/types";
-import {
-  parseListWithDate,
-  twentyFourHourToShortAMPMHour,
-  utcToEst,
-} from "@/utils/date";
 import { getAveragePercent } from "@/utils/records";
 import { record } from "@prisma/client";
 import clsx from "clsx";
@@ -54,9 +51,7 @@ const DayBarChartInner = ({
   const xMax = width - margin.left - margin.right;
   const yMax = height - margin.top - margin.bottom;
 
-  const data: DataPoint[] = [
-    5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
-  ].map((hour) => {
+  const data: DataPoint[] = HOURS.map((hour) => {
     // TODO: use today by default, but this should be customizable
     let percent = getAveragePercent({ records, day: today.day, hour });
     if (percent == 0 || isNaN(percent)) percent = 2; // minimum 2% to show bar
@@ -68,11 +63,14 @@ const DayBarChartInner = ({
   const livePercent = lastRecord.percent;
   const liveTime = lastRecord.time;
 
+  console.log({ livePercent });
+
   const getX = (d: DataPoint) => d.hour;
   const getY = (d: DataPoint) => d.percent;
 
   const xScale = scaleBand()
     .range([0, xMax])
+    // @ts-ignore
     .domain(data.map(getX))
     .padding(0.15);
 
@@ -90,6 +88,7 @@ const DayBarChartInner = ({
 
         const barWidth = xScale.bandwidth();
         const barHeight = yMax - yScale(getY(d) ?? 0);
+        // @ts-ignore
         const barX = xScale(getX(d));
         const barY = yMax - barHeight;
 
@@ -122,18 +121,17 @@ const DayBarChartInner = ({
                 y={barY + barHeightDiff}
                 width={barWidth}
                 height={liveBarHeight}
-                className={clsx(`fill-current`, {
-                  [BAR_CHART_COLORS.NORMAL]: y < 40,
-                  [BAR_CHART_COLORS.BUSY]: y >= 40 && y < 60,
-                  [BAR_CHART_COLORS.CROWDED]: y >= 60 && y < 80,
-                  [BAR_CHART_COLORS.VERY_CROWDED]: y >= 80 && y < 200,
-                })}
+                className={clsx(
+                  `fill-current`,
+                  getBarColorFromPercent(livePercent)
+                )}
               />
             )}
 
             {showTime && (
               <text
                 className="text-sm font-medium text-gray-400 fill-current"
+                // @ts-ignore
                 x={barX + barWidth / 2}
                 y={height - 10}
                 textAnchor="middle"

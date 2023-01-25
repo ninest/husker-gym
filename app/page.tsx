@@ -1,12 +1,10 @@
-import { prisma } from "@/db/prisma";
+import { getGyms } from "@/db/functions";
 import { SectionSummary } from "./components/SectionSummary";
 
 export const revalidate = 0; // no cache
 
 export default async function HomePage() {
-  const gyms = await prisma.gym.findMany({
-    include: { sections: { select: { id: true } } },
-  });
+  const gyms = await getGyms();
 
   return (
     <main className="max-w-[60ch] mx-auto p-5">
