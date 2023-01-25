@@ -1,14 +1,13 @@
+import { getUtcToEstDayHour, serializeListWithDate } from "@/date/utils";
 import { getRecentRecords, getSectionBySlug } from "@/db/functions";
-import { prisma } from "@/db/prisma";
-import {
-  getUtcToEstDayHour,
-  serializeListWithDate,
-  utcToEst,
-} from "@/date/utils";
-import { subWeeks } from "date-fns";
-import { addDays } from "date-fns/esm";
 import { DayBarChart } from "./components/DayBarChart";
 import { WeekHeatMap } from "./components/WeekHeatMap";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../../components/ui/Tabs";
 
 export const revalidate = 0; // no cache
 
@@ -32,17 +31,25 @@ export default async function SectionPage({ params }: SectionPageProps) {
   return (
     <main className="max-w-[60ch] mx-auto p-5">
       <h1 className="font-bold text-2xl mb-2">{section?.name}</h1>
-      <div className="mb-8">{section?.description}</div>
+      <div className="mb-4">{section?.description}</div>
 
-      <div className="mb-8">
-        <DayBarChart serializedRecords={serializedRecords} today={today} />
-      </div>
+      <Tabs defaultValue="day">
+        <TabsList className="w-full md:w-auto">
+          <TabsTrigger value="day">Day</TabsTrigger>
+          <TabsTrigger value="week">Week</TabsTrigger>
+        </TabsList>
 
-      <WeekHeatMap
-        section={section!}
-        serializedRecords={serializedRecords}
-        today={today}
-      />
+        <TabsContent value="day">
+          <DayBarChart serializedRecords={serializedRecords} today={today} />
+        </TabsContent>
+        <TabsContent value="week">
+          <WeekHeatMap
+            section={section!}
+            serializedRecords={serializedRecords}
+            today={today}
+          />
+        </TabsContent>
+      </Tabs>
     </main>
   );
 }
