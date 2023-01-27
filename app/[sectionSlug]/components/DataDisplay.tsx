@@ -1,6 +1,6 @@
 "use client";
 
-import { twentyFourHourToAMPMHour } from "@/date/display";
+import { DAYS, twentyFourHourToAMPMHour } from "@/date/display";
 import { crowdLevelDescription } from "@/string";
 import { getTextBgColor } from "@/style/colors";
 import clsx from "clsx";
@@ -12,10 +12,17 @@ export const DataDisplay = () => {
   if (!displayData) return <></>;
   return (
     <div>
-      <span className={clsx("font-bold", getTextBgColor(displayData.percent))}>
+      <span
+        className={clsx(
+          "font-bold rounded p-[0.2px]",
+          getTextBgColor(displayData.percent)
+        )}
+      >
+        {DAYS[displayData.day].shortName},{" "}
         {twentyFourHourToAMPMHour(displayData.hour)}
       </span>
-      : {crowdLevelDescription(displayData.percent)}
+      : {displayData.isLive ? "Currently" : "Usually"}{" "}
+      {crowdLevelDescription(displayData.percent)}
     </div>
   );
 };

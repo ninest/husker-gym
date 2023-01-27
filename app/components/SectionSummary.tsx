@@ -1,14 +1,12 @@
-import { prisma } from "@/db/prisma";
 import { lastUpdated } from "@/date/display";
-import Link from "next/link";
-import { getRecentRecords, getSectionBySlug } from "@/db/functions";
 import {
   estToUtc,
   getUtcToEstDayHour,
   serializeListWithDate,
-  utcToEst,
 } from "@/date/utils";
-import { DayBarChart } from "../[sectionSlug]/components/DayBarChart";
+import { getRecentRecords, getSectionBySlug } from "@/db/functions";
+import { crowdLevelDescription } from "@/string";
+import Link from "next/link";
 import { CompactDayBarChart } from "./CompactDayBarChart";
 
 export const SectionSummary = async ({ slug }: { slug: string }) => {
@@ -32,16 +30,17 @@ export const SectionSummary = async ({ slug }: { slug: string }) => {
       className="block rounded-lg p-3 bg-gray-50 hover:bg-gray-100"
     >
       <div className="flex justify-between">
-        <div>
-          <h3>{shortenedSectionName}</h3>
-          <div className="text-sm text-gray-500">
+        <div className="flex flex-col">
+          <h3 className="font-medium">{shortenedSectionName}</h3>
+
+          <div className="text-xs text-gray-500">
             {lastUpdated(lastRecord?.time!)}
           </div>
         </div>
         <CompactDayBarChart
           serializedRecords={serializedRecords}
           today={today}
-          className="w-1/3 h-20"
+          className="w-1/3 h-[4.5rem]"
         />
       </div>
       {/* <div className="flex justify-between items-center">

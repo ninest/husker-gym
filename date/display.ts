@@ -6,7 +6,7 @@ import { formatDistance } from "date-fns";
 export const lastUpdated = (date: Date): string => {
   // TODO: If last updated less than 2 hours back, only then show relative time
   const relativeTimeBack = formatDistance(new Date(), date);
-  return `Last updated ${relativeTimeBack} back`;
+  return `Updated ${relativeTimeBack} back`;
 };
 
 // Need better name

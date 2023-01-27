@@ -34,6 +34,22 @@ export const getBarColorFromPercent = (percent: number) => {
   else return BAR_CHART_COLORS.VERY_CROWDED;
 };
 
+// strokes for selected bar
+export const BAR_CHART_STROKES = {
+  DEFAULT: "stroke-gray-200",
+  NORMAL: "stroke-indigo-300", // 0-40% full
+  BUSY: "stroke-orange-300", // 40-60% full
+  CROWDED: "stroke-red-300", // 60-80%
+  VERY_CROWDED: "stroke-pink-300", // 80%+
+};
+
+export const getBarStrokeFromPercent = (percent: number) => {
+  if (percent < 40) return BAR_CHART_STROKES.NORMAL;
+  else if (percent < 60) return BAR_CHART_STROKES.BUSY;
+  else if (percent < 80) return BAR_CHART_STROKES.CROWDED;
+  else return BAR_CHART_STROKES.VERY_CROWDED;
+};
+
 /* Text BG colors */
 export const TEXT_BG_COLORS = {
   NORMAL: "bg-indigo-300", // 0-40% full

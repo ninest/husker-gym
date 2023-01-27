@@ -2,7 +2,11 @@
 
 import { HOURS, twentyFourHourToShortAMPMHour } from "@/date/display";
 import { parseListWithDate } from "@/date/utils";
-import { BAR_CHART_COLORS, getBarColorFromPercent } from "@/style/colors";
+import {
+  BAR_CHART_COLORS,
+  getBarColorFromPercent,
+  getBarStrokeFromPercent,
+} from "@/style/colors";
 import { DataPoint, DayHour } from "@/types";
 import { getAveragePercent } from "@/utils/records";
 import { record } from "@prisma/client";
@@ -33,6 +37,7 @@ export const DayBarChart = ({
         today={today}
         width={bounds.width}
         height={bounds.height}
+        showLiveHour={true}
       />
     </div>
   );
@@ -43,11 +48,13 @@ const DayBarChartInner = ({
   height,
   records,
   today,
+  showLiveHour = false,
 }: {
   width: number;
   height: number;
   records: record[];
-  today: DayHour;
+  today: DayHour; // The day according to the bar chart
+  showLiveHour?: boolean; // true if we want to highlight the current hour
 }) => {
   const margin = { top: 10, bottom: 20, left: 10, right: 60 };
   const xMax = width - margin.left - margin.right;
@@ -83,9 +90,14 @@ const DayBarChartInner = ({
 
   const xTicks = [6, 9, 12, 15, 18, 21];
 
-  const { setDisplayData } = useDataDisplay();
+  const { displayData, setDisplayData } = useDataDisplay();
   useEffect(() => {
-    setDisplayData({ hour: currentHour, percent: livePercent });
+    setDisplayData({
+      day: today.day,
+      hour: currentHour,
+      percent: livePercent,
+      isLive: true,
+    });
   }, []);
 
   return (
@@ -110,6 +122,10 @@ const DayBarChartInner = ({
         const liveBarHeight = yMax - yScale(livePercent ?? 0);
         const barHeightDiff = barHeight - liveBarHeight;
 
+        // If it's currently selected to show a display of crowd level
+        // But if the "live record" hour cannot be selected, because there is already another bar showing that
+        const isSelected = currentHour != x && displayData?.hour == x;
+
         return (
           <g key={x}>
             <rect
@@ -118,12 +134,24 @@ const DayBarChartInner = ({
               y={barY}
               width={barWidth}
               height={barHeight}
-              className={`fill-current ${BAR_CHART_COLORS.DEFAULT}`}
-              onClick={() => setDisplayData({ hour: x, percent: y })}
+              className={clsx(
+                `fill-current ${BAR_CHART_COLORS.DEFAULT} stroke-2`,
+                {
+                  [getBarStrokeFromPercent(y)]: isSelected,
+                }
+              )}
+              onClick={() =>
+                setDisplayData({
+                  day: today.day,
+                  hour: x,
+                  percent: y,
+                  isLive: false,
+                })
+              }
             />
 
             {/* If the last record is this hour, overlay it and display the current crowded level color */}
-            {isNow && (
+            {showLiveHour && isNow && (
               <rect
                 rx={4}
                 x={barX}
