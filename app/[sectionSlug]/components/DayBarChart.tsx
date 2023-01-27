@@ -8,7 +8,9 @@ import { getAveragePercent } from "@/utils/records";
 import { record } from "@prisma/client";
 import clsx from "clsx";
 import { scaleBand, scaleLinear } from "d3-scale";
+import { useEffect } from "react";
 import useMeasure from "react-use-measure";
+import { useDataDisplay } from "../hooks/use-data-display";
 
 interface DayBarChartProps {
   serializedRecords: record[];
@@ -36,8 +38,6 @@ export const DayBarChart = ({
   );
 };
 
-
-
 const DayBarChartInner = ({
   width,
   height,
@@ -64,6 +64,7 @@ const DayBarChartInner = ({
   const lastRecord = records[0];
   const livePercent = lastRecord.percent;
   const liveTime = lastRecord.time;
+  const currentHour = liveTime.getUTCHours();
 
   const getX = (d: DataPoint) => d.hour;
   const getY = (d: DataPoint) => d.percent;
@@ -82,6 +83,11 @@ const DayBarChartInner = ({
 
   const xTicks = [6, 9, 12, 15, 18, 21];
 
+  const { setDisplayData } = useDataDisplay();
+  useEffect(() => {
+    setDisplayData({ hour: currentHour, percent: livePercent });
+  }, []);
+
   return (
     <svg width={width} height={height}>
       {/* Bars */}
@@ -98,7 +104,7 @@ const DayBarChartInner = ({
         // Show the time ticker (x axis) every 3 ticks (6a, 9a, ...)
         const showTime = xTicks.includes(x);
 
-        const isNow = x == liveTime.getUTCHours(); // actually gets EST time because of conversion
+        const isNow = x == currentHour; // actually gets EST time because of conversion
 
         // height diff in estimated count now and actual count now
         const liveBarHeight = yMax - yScale(livePercent ?? 0);
@@ -113,6 +119,7 @@ const DayBarChartInner = ({
               width={barWidth}
               height={barHeight}
               className={`fill-current ${BAR_CHART_COLORS.DEFAULT}`}
+              onClick={() => setDisplayData({ hour: x, percent: y })}
             />
 
             {/* If the last record is this hour, overlay it and display the current crowded level color */}

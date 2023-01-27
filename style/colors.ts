@@ -33,3 +33,18 @@ export const getBarColorFromPercent = (percent: number) => {
   else if (percent < 80) return BAR_CHART_COLORS.CROWDED;
   else return BAR_CHART_COLORS.VERY_CROWDED;
 };
+
+/* Text BG colors */
+export const TEXT_BG_COLORS = {
+  NORMAL: "bg-indigo-300", // 0-40% full
+  BUSY: "bg-orange-300", // 40-60% full
+  CROWDED: "bg-red-300", // 60-80%
+  VERY_CROWDED: "bg-pink-300", // 80%+
+};
+
+export const getTextBgColor = (percent: number) => {
+  if (percent < 40) return TEXT_BG_COLORS.NORMAL;
+  else if (percent < 60) return TEXT_BG_COLORS.BUSY;
+  else if (percent < 80) return TEXT_BG_COLORS.CROWDED;
+  else return TEXT_BG_COLORS.VERY_CROWDED;
+};

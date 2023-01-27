@@ -9,6 +9,7 @@ import {
   TabsTrigger,
 } from "../../components/Tabs";
 import { BackButton } from "@/components/BackButton";
+import { DataDisplay } from "./components/DataDisplay";
 
 export const revalidate = 0; // no cache
 
@@ -42,6 +43,7 @@ export default async function SectionPage({ params }: SectionPageProps) {
         </TabsList>
 
         <TabsContent value="day">
+          <DataDisplay />
           <DayBarChart
             serializedRecords={serializedRecords}
             today={today}
