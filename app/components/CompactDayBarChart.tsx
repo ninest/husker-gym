@@ -1,6 +1,6 @@
 "use client";
 
-import { HOURS, twentyFourHourToShortAMPMHour } from "@/date/display";
+import { twentyFourHourToShortAMPMHour } from "@/date/display";
 import { parseListWithDate } from "@/date/utils";
 import { BAR_CHART_COLORS, getBarColorFromPercent } from "@/style/colors";
 import { DataPoint, DayHour } from "@/types";
@@ -10,23 +10,23 @@ import clsx from "clsx";
 import { scaleBand, scaleLinear } from "d3-scale";
 import useMeasure from "react-use-measure";
 
-interface DayBarChartProps {
+interface CompactDayBarChartProps {
   serializedRecords: record[];
   today: DayHour;
   className?: string;
 }
 
-export const DayBarChart = ({
+export const CompactDayBarChart = ({
   serializedRecords,
   today,
-  className = "",
-}: DayBarChartProps) => {
+  className,
+}: CompactDayBarChartProps) => {
   const [ref, bounds] = useMeasure();
   const records = parseListWithDate(serializedRecords, "time");
 
   return (
-    <div className={clsx(className)} ref={ref}>
-      <DayBarChartInner
+    <div className={className} ref={ref}>
+      <CompactDayBarChartInner
         records={records}
         today={today}
         width={bounds.width}
@@ -36,9 +36,7 @@ export const DayBarChart = ({
   );
 };
 
-
-
-const DayBarChartInner = ({
+export const CompactDayBarChartInner = ({
   width,
   height,
   records,
@@ -49,18 +47,25 @@ const DayBarChartInner = ({
   records: record[];
   today: DayHour;
 }) => {
-  const margin = { top: 10, bottom: 20, left: 10, right: 60 };
+  const margin = { top: 0, bottom: 15, left: 0, right: 0 };
   const xMax = width - margin.left - margin.right;
   const yMax = height - margin.top - margin.bottom;
 
-  const data: DataPoint[] = HOURS.map((hour) => {
-    // TODO: use today by default, but this should be customizable
+  // Only show 1 hour before, current hour, and 2 hours after
+  const hours = [
+    today.hour - 2,
+    today.hour - 1,
+    today.hour,
+    today.hour + 1,
+    today.hour + 2,
+  ];
+
+  const data: DataPoint[] = hours.map((hour) => {
     let percent = getAveragePercent({ records, day: today.day, hour });
-    if (percent == 0 || isNaN(percent)) percent = 2; // minimum 2% to show bar
+    if (isNaN(percent)) percent = 0;
     return { hour, percent };
   });
 
-  // This is the current live count (NOT averaged)
   const lastRecord = records[0];
   const livePercent = lastRecord.percent;
   const liveTime = lastRecord.time;
@@ -72,31 +77,27 @@ const DayBarChartInner = ({
     .range([0, xMax])
     // @ts-ignore
     .domain(data.map(getX))
-    .padding(0.15);
+    .padding(0.08);
 
-  const maxPercent = Math.max(...data.map(getY), livePercent);
+  const maxPercent = Math.max(...data.map(getY), livePercent, 75);
+
   const yScale = scaleLinear()
     .range([yMax, 0])
     // Make chart a little taller than highest percent
     .domain([0, maxPercent + 10]);
 
-  const xTicks = [6, 9, 12, 15, 18, 21];
-
   return (
     <svg width={width} height={height}>
       {/* Bars */}
-      {data.map((d) => {
-        const x = getX(d); // hour
-        const y = getY(d) ?? 0; // percent
+      {data.map((d, index) => {
+        const x = getX(d); //hour
+        const y = getY(d) ?? 0; //percent
 
         const barWidth = xScale.bandwidth();
         const barHeight = yMax - yScale(getY(d) ?? 0);
         // @ts-ignore
         const barX = xScale(getX(d));
         const barY = yMax - barHeight;
-
-        // Show the time ticker (x axis) every 3 ticks (6a, 9a, ...)
-        const showTime = xTicks.includes(x);
 
         const isNow = x == liveTime.getUTCHours(); // actually gets EST time because of conversion
 
@@ -107,7 +108,7 @@ const DayBarChartInner = ({
         return (
           <g key={x}>
             <rect
-              rx={4}
+              rx={3}
               x={barX}
               y={barY}
               width={barWidth}
@@ -118,7 +119,7 @@ const DayBarChartInner = ({
             {/* If the last record is this hour, overlay it and display the current crowded level color */}
             {isNow && (
               <rect
-                rx={4}
+                rx={3}
                 x={barX}
                 y={barY + barHeightDiff}
                 width={barWidth}
@@ -130,12 +131,13 @@ const DayBarChartInner = ({
               />
             )}
 
-            {showTime && (
+            {/* Show ticks for every other */}
+            {index % 2 == 0 && (
               <text
-                className="text-sm font-medium text-gray-400 fill-current"
+                className="text-xs font-medium text-gray-400 fill-current"
                 // @ts-ignore
                 x={barX + barWidth / 2}
-                y={height - 10}
+                y={height - 5}
                 textAnchor="middle"
               >
                 {twentyFourHourToShortAMPMHour(x)}
@@ -144,7 +146,6 @@ const DayBarChartInner = ({
           </g>
         );
       })}
-
       {/* Guidelines */}
       <line
         x1={0}
@@ -154,35 +155,16 @@ const DayBarChartInner = ({
         className="stroke-gray-500"
         strokeDasharray={"5,5"}
       />
-      <text
-        x={width - 55}
-        y={yScale(50)}
-        className="text-xs font-medium text-gray-400 fill-current"
-        alignmentBaseline="middle"
-      >
-        50% full
-      </text>
-
       {/* Only show 100 if there is a record with showing 110% capacity */}
       {maxPercent > 100 && (
-        <>
-          <line
-            x1={0}
-            x2={width - margin.right}
-            y1={yScale(100)}
-            y2={yScale(100)}
-            className="stroke-gray-500"
-            strokeDasharray={"5,5"}
-          />
-          <text
-            x={width - 55}
-            y={yScale(100)}
-            className="text-xs font-medium text-gray-400 fill-current"
-            alignmentBaseline="middle"
-          >
-            100% full
-          </text>
-        </>
+        <line
+          x1={0}
+          x2={width - margin.right}
+          y1={yScale(100)}
+          y2={yScale(100)}
+          className="stroke-gray-500"
+          strokeDasharray={"5,5"}
+        />
       )}
     </svg>
   );

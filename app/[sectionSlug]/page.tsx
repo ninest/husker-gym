@@ -7,7 +7,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "../../components/ui/Tabs";
+} from "../../components/Tabs";
 import { BackButton } from "@/components/BackButton";
 
 export const revalidate = 0; // no cache
@@ -42,7 +42,11 @@ export default async function SectionPage({ params }: SectionPageProps) {
         </TabsList>
 
         <TabsContent value="day">
-          <DayBarChart serializedRecords={serializedRecords} today={today} />
+          <DayBarChart
+            serializedRecords={serializedRecords}
+            today={today}
+            className="relative w-full h-64"
+          />
         </TabsContent>
         <TabsContent value="week">
           <WeekHeatMap

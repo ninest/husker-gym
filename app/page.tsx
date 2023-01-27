@@ -15,7 +15,7 @@ export default async function HomePage() {
           <div className="space-y-4 -mx-1">
             {gym.sections.map((section) => (
               // @ts-expect-error Server Component
-              <SectionSummary key={section.id} id={section.id} />
+              <SectionSummary key={section.id} slug={section.slug} />
             ))}
           </div>
         </section>

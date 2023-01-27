@@ -4,7 +4,9 @@ import { prisma } from "./prisma";
 
 // Fetch gyms and section IDs
 export const getGyms = () =>
-  prisma.gym.findMany({ include: { sections: { select: { id: true } } } });
+  prisma.gym.findMany({
+    include: { sections: { select: { id: true, slug: true } } },
+  });
 
 // Get a gym section from slug
 export const getSectionBySlug = (slug: string) =>
@@ -13,7 +15,7 @@ export const getSectionBySlug = (slug: string) =>
 // Get records (past `daysBack` days) for a gym section
 interface GetRecentRecordsParams {
   sectionId: number;
-  daysBack: number;
+  daysBack?: number;
 }
 export const getRecentRecords = async ({
   sectionId,

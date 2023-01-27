@@ -24,7 +24,7 @@ export const BAR_CHART_COLORS = {
   NORMAL: "text-indigo-300", // 0-40% full
   BUSY: "text-orange-300", // 40-60% full
   CROWDED: "text-red-300", // 60-80%
-  VERY_CROWDED: "text-red-700", // 80%+
+  VERY_CROWDED: "text-pink-300", // 80%+
 };
 
 export const getBarColorFromPercent = (percent: number) => {
