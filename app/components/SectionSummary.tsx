@@ -6,6 +6,8 @@ import {
 } from "@/date/utils";
 import { getRecentRecords, getSectionBySlug } from "@/db/functions";
 import { crowdLevelDescription } from "@/string";
+import { getTextBgColor } from "@/style/colors";
+import clsx from "clsx";
 import Link from "next/link";
 import { CompactDayBarChart } from "./CompactDayBarChart";
 
@@ -20,7 +22,8 @@ export const SectionSummary = async ({ slug }: { slug: string }) => {
   const records = await getRecentRecords({ sectionId: section?.id! });
 
   const lastRecord = records[0];
-  const today = getUtcToEstDayHour(estToUtc(lastRecord.time));
+  const lastRecordTime = estToUtc(lastRecord.time);
+  const today = getUtcToEstDayHour(lastRecordTime);
 
   const serializedRecords = serializeListWithDate(records, "time");
 
@@ -31,10 +34,20 @@ export const SectionSummary = async ({ slug }: { slug: string }) => {
     >
       <div className="flex justify-between">
         <div className="flex flex-col">
-          <h3 className="font-medium">{shortenedSectionName}</h3>
-
-          <div className="text-xs text-gray-500">
-            {lastUpdated(lastRecord?.time!)}
+          <h3 className="font-bold">{shortenedSectionName}</h3>
+          <div className="text-sm">
+            <span
+              className={clsx(
+                "font-semibold rounded py-[0.2px] px-0.5",
+                getTextBgColor(lastRecord.percent)
+              )}
+            >
+              Live
+            </span>{" "}
+            <span>{crowdLevelDescription(lastRecord.percent)}</span>
+          </div>
+          <div className="mt-2 text-xs text-gray-500">
+            {lastUpdated(lastRecordTime)}
           </div>
         </div>
         <CompactDayBarChart
