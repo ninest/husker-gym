@@ -2,7 +2,12 @@ import { prisma } from "@/db/prisma";
 import { lastUpdated } from "@/date/display";
 import Link from "next/link";
 import { getRecentRecords, getSectionBySlug } from "@/db/functions";
-import { getUtcToEstDayHour, serializeListWithDate } from "@/date/utils";
+import {
+  estToUtc,
+  getUtcToEstDayHour,
+  serializeListWithDate,
+  utcToEst,
+} from "@/date/utils";
 import { DayBarChart } from "../[sectionSlug]/components/DayBarChart";
 import { CompactDayBarChart } from "./CompactDayBarChart";
 
@@ -14,17 +19,11 @@ export const SectionSummary = async ({ slug }: { slug: string }) => {
     section.name.indexOf(" ") + 1
   );
 
-  // Find latest count to show current time
-  // const latestRecord = await prisma.record.findFirst({
-  //   where: { section_id: id },
-  //   orderBy: {
-  //     time: "desc",
-  //   },
-  // });
-
-  // This is always run on the server
-  const today = getUtcToEstDayHour(new Date());
   const records = await getRecentRecords({ sectionId: section?.id! });
+
+  const lastRecord = records[0];
+  const today = getUtcToEstDayHour(estToUtc(lastRecord.time));
+
   const serializedRecords = serializeListWithDate(records, "time");
 
   return (
@@ -33,7 +32,12 @@ export const SectionSummary = async ({ slug }: { slug: string }) => {
       className="block rounded-lg p-3 bg-gray-50 hover:bg-gray-100"
     >
       <div className="flex justify-between">
-        <div>{shortenedSectionName}</div>
+        <div>
+          <h3>{shortenedSectionName}</h3>
+          <div className="text-sm text-gray-500">
+            {lastUpdated(lastRecord?.time!)}
+          </div>
+        </div>
         <CompactDayBarChart
           serializedRecords={serializedRecords}
           today={today}
@@ -43,9 +47,7 @@ export const SectionSummary = async ({ slug }: { slug: string }) => {
       {/* <div className="flex justify-between items-center">
         <div>
           <h3 className="font-semibold">{shortenedSectionName}</h3>
-          <div className="text-sm text-gray-500">
-            {lastUpdated(latestRecord?.time!)}
-          </div>
+          
         </div>
 
         <div>

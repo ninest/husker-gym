@@ -1,5 +1,5 @@
 import { DayHour } from "@/types";
-import { formatDistance, subMinutes } from "date-fns";
+import { addMinutes, formatDistance, subMinutes } from "date-fns";
 
 export const bostonTime = (): Date => {
   const offset = new Date().getTimezoneOffset();
@@ -8,6 +8,10 @@ export const bostonTime = (): Date => {
 
 export const utcToEst = (date: Date): Date => {
   return subMinutes(date, 300);
+};
+
+export const estToUtc = (date: Date): Date => {
+  return addMinutes(date, 300);
 };
 
 export const getUtcToEstDayHour = (date: Date): DayHour => {
@@ -19,8 +23,6 @@ export const getUtcToEstDayHour = (date: Date): DayHour => {
     hour: est.getUTCHours(),
   };
 };
-
-
 
 export const serializeListWithDate = <T>(list: T[], dateKey: string): T[] => {
   return list.map((item: any) => ({
@@ -35,4 +37,3 @@ export const parseListWithDate = <T>(list: T[], dateKey: string): T[] => {
     [dateKey]: new Date(item[dateKey]),
   }));
 };
-
