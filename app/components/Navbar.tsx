@@ -7,9 +7,13 @@ import { FaEllipsisH, FaMoon, FaSun } from "react-icons/fa";
 export const Navbar = () => {
   const { theme, setTheme } = useTheme();
   useEffect(() => {
-    console.log(theme);
+    console.log(`need to set to ${theme}`);
+    
+    console.log(document.documentElement.className);
     document.documentElement.className = theme;
+    console.log(document.documentElement.className);
   }, []);
+
   return (
     <header className="px-5 pt-3">
       <div className="flex items-center justify-between">
