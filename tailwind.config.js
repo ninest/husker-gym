@@ -6,6 +6,7 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx}",
     "./style/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: ["class", '[data-mode="dark"]'],
   theme: {
     extend: {
       fontFamily: {

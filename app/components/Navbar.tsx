@@ -1,8 +1,14 @@
 "use client";
 import { MenuButton } from "@/components/MenuButton";
+import { useTheme } from "@/hooks/settings";
+import { useEffect } from "react";
 import { FaEllipsisH, FaMoon, FaSun } from "react-icons/fa";
 
 export const Navbar = () => {
+  const { theme, setTheme } = useTheme();
+  useEffect(() => {
+    document.body.dataset.mode = theme;
+  }, []);
   return (
     <header className="px-5 pt-3">
       <div className="flex items-center justify-between">
@@ -15,11 +21,19 @@ export const Navbar = () => {
 
         <MenuButton
           items={[
-            { icon: FaMoon, title: "Dark theme" },
-            { icon: FaSun, title: "Light theme" },
+            {
+              icon: FaMoon,
+              title: "Dark theme",
+              action: () => setTheme("dark"),
+            },
+            {
+              icon: FaSun,
+              title: "Light theme",
+              action: () => setTheme("light"),
+            },
           ]}
         >
-          <div className="bg-gray-100 text-gray-600 p-1 rounded-full">
+          <div className="bg-gray-100 text-gray-600 p-1 rounded-full dark:bg-gray-900 text-gray-400">
             <FaEllipsisH />
           </div>
         </MenuButton>

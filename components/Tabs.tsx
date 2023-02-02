@@ -13,7 +13,7 @@ const TabsList = forwardRef<
   <TabsPrimitive.List
     ref={ref}
     className={clsx(
-      "inline-flex bg-gray-200 rounded-lg p-0.5",
+      "inline-flex bg-gray-200 rounded-lg p-0.5 dark:bg-gray-900",
       className
     )}
     {...props}
@@ -27,8 +27,8 @@ const TabsTrigger = forwardRef<
 >(({ className, ...props }, ref) => (
   <TabsPrimitive.Trigger
     className={clsx(
-      "min-w-[100px] flex-1 p-1 rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm",
-      "text-sm font-medium text-gray-600",
+      "min-w-[100px] flex-1 p-1 rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm dark:data-[state=active]:bg-black",
+      "text-sm font-medium text-gray-600 dark:text-gray-500",
       className
     )}
     {...props}

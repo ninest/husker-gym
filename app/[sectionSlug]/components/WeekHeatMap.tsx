@@ -35,7 +35,7 @@ export const WeekHeatMap = ({
 
   return (
     <div>
-      <div className="mb-8 bg-gray-50 -m-2 p-2 rounded-xl">
+      <div className="mb-8 bg-gray-50 -m-2 p-2 rounded-xl dark:bg-black">
         {/* First row, days */}
         <div className="grid grid-cols-week gap-2 mb-3">
           <div></div>
@@ -43,7 +43,7 @@ export const WeekHeatMap = ({
             <div
               key={day.shortName}
               className={clsx("text-center", {
-                "bg-green-200 rounded-md": today.day == dayIndex,
+                "bg-green-200 rounded-md dark:bg-green-800": today.day == dayIndex,
               })}
             >
               {day.singleChar}
@@ -55,7 +55,7 @@ export const WeekHeatMap = ({
             <div key={hour} className="grid grid-cols-week gap-2">
               <div
                 className={clsx("text-sm text-right pr-1 tabular-nums", {
-                  "bg-green-200 rounded-md": today.hour == hour,
+                  "bg-green-200 rounded-md dark:bg-green-800": today.hour == hour,
                 })}
               >
                 {twentyFourHourToAMPMHour(hour)}
@@ -139,7 +139,7 @@ export const WeekHeatMap = ({
           </div>
         </>
       ) : (
-        <div className="p-4 rounded-xl border-4 border-dashed">
+        <div className="p-4 rounded-xl border-4 border-dashed dark:border-gray-700">
           <div className="font-medium text-center text-gray-500">
             Click on a cell to get more information about the gym on that day
             and time.

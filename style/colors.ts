@@ -1,10 +1,10 @@
 /* Weak heatmap */
 export const WEEK_HEATMAP_COLORS = {
-  SPARSE: "bg-blue-100", // 0-20% full
-  NORMAL: "bg-blue-300", // 20-40
-  BUSY: "bg-blue-500", // 40-60
-  CROWDED: "bg-blue-700", // 60-80
-  VERY_CROWDED: "bg-blue-900", // >80
+  SPARSE: "bg-blue-100 dark:opacity-60", // 0-20% full
+  NORMAL: "bg-blue-300 dark:opacity-50", // 20-40
+  BUSY: "bg-blue-500 dark:opacity-40", // 40-60
+  CROWDED: "bg-blue-700 dark:opacity-40", // 60-80
+  VERY_CROWDED: "bg-blue-900 dark:opacity-40", // >80
 };
 
 export const getHourColorFromPercent = (percent: number) => {
@@ -20,11 +20,11 @@ export const getHourColorFromPercent = (percent: number) => {
 // Using "text-" classes for styling rects
 
 export const BAR_CHART_COLORS = {
-  DEFAULT: "text-gray-200",
-  NORMAL: "text-indigo-300", // 0-40% full
-  BUSY: "text-orange-300", // 40-60% full
-  CROWDED: "text-red-300", // 60-80%
-  VERY_CROWDED: "text-pink-300", // 80%+
+  DEFAULT: "text-gray-200 dark:text-gray-700",
+  NORMAL: "text-indigo-300 dark:text-indigo-600", // 0-40% full
+  BUSY: "text-orange-300 dark:text-orange-600", // 40-60% full
+  CROWDED: "text-red-300 dark:text-red-600", // 60-80%
+  VERY_CROWDED: "text-pink-300 dark:text-pink-600", // 80%+
 };
 
 export const getBarColorFromPercent = (percent: number) => {
@@ -36,11 +36,11 @@ export const getBarColorFromPercent = (percent: number) => {
 
 // strokes for selected bar
 export const BAR_CHART_STROKES = {
-  DEFAULT: "stroke-gray-200",
-  NORMAL: "stroke-indigo-300", // 0-40% full
-  BUSY: "stroke-orange-300", // 40-60% full
-  CROWDED: "stroke-red-300", // 60-80%
-  VERY_CROWDED: "stroke-pink-300", // 80%+
+  DEFAULT: "stroke-gray-200 dark:stroke-gray-700",
+  NORMAL: "stroke-indigo-300 dark:stroke-indigo-600", // 0-40% full
+  BUSY: "stroke-orange-300 dark:stroke-orange-600", // 40-60% full
+  CROWDED: "stroke-red-300 dark:stroke-red-600", // 60-80%
+  VERY_CROWDED: "stroke-pink-300 dark:stroke-pink-600", // 80%+
 };
 
 export const getBarStrokeFromPercent = (percent: number) => {
@@ -52,10 +52,10 @@ export const getBarStrokeFromPercent = (percent: number) => {
 
 /* Text BG colors */
 export const TEXT_BG_COLORS = {
-  NORMAL: "bg-indigo-300", // 0-40% full
-  BUSY: "bg-orange-300", // 40-60% full
-  CROWDED: "bg-red-300", // 60-80%
-  VERY_CROWDED: "bg-pink-300", // 80%+
+  NORMAL: "bg-indigo-300 dark:bg-indigo-700", // 0-40% full
+  BUSY: "bg-orange-300 dark:bg-orange-600", // 40-60% full
+  CROWDED: "bg-red-300 dark:bg-red-700", // 60-80%
+  VERY_CROWDED: "bg-pink-300 dark:bg-pink-700", // 80%+
 };
 
 export const getTextBgColor = (percent: number) => {

@@ -30,15 +30,18 @@ export const SectionSummary = async ({ slug }: { slug: string }) => {
   return (
     <Link
       href={`/${section?.slug}`}
-      className="block rounded-lg p-3 bg-gray-50 hover:bg-gray-100"
+      className="block rounded-lg dark:rounded-xl p-3 bg-gray-50 hover:bg-gray-100 dark:bg-gray-900 hover:dark:bg-gray-800"
     >
       <div className="flex justify-between">
         <div className="flex flex-col">
-          <h3 className="font-bold">{shortenedSectionName}</h3>
+          <h3 className="font-bold dark:text-gray-200">
+            {shortenedSectionName}
+          </h3>
           <div className="text-sm">
             <span
               className={clsx(
                 "font-semibold rounded py-[0.2px] px-0.5",
+                "dark:text-gray-300",
                 getTextBgColor(lastRecord.percent)
               )}
             >

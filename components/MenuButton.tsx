@@ -5,7 +5,7 @@ import type { IconType } from "react-icons";
 
 interface MenuButtonProps {
   children: JSX.Element;
-  items: { action?: () => {}; title: string; icon?: IconType }[];
+  items: { action?: () => void; title: string; icon?: IconType }[];
 }
 export const MenuButton = ({ children, items }: MenuButtonProps) => {
   return (
@@ -17,10 +17,11 @@ export const MenuButton = ({ children, items }: MenuButtonProps) => {
             align="end"
             className="mt-1 rounded-lg bg-gray-100 w-52 p-2 border"
           >
-            {items.map((item) => {
+            {items.map((item, index) => {
               const Icon = item.icon;
               return (
                 <DropdownMenu.Item
+                  key={index}
                   onClick={() => {
                     if (item.action) item.action();
                   }}
