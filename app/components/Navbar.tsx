@@ -1,4 +1,6 @@
-import { FaEllipsisH } from "react-icons/fa";
+"use client";
+import { MenuButton } from "@/components/MenuButton";
+import { FaEllipsisH, FaMoon, FaSun } from "react-icons/fa";
 
 export const Navbar = () => {
   return (
@@ -11,9 +13,16 @@ export const Navbar = () => {
           </div>
         </div>
 
-        <div className="bg-gray-100 text-gray-800 p-1 rounded-full">
-          <FaEllipsisH />
-        </div>
+        <MenuButton
+          items={[
+            { icon: FaMoon, title: "Dark theme" },
+            { icon: FaSun, title: "Light theme" },
+          ]}
+        >
+          <div className="bg-gray-100 text-gray-600 p-1 rounded-full">
+            <FaEllipsisH />
+          </div>
+        </MenuButton>
       </div>
     </header>
   );
