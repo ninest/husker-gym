@@ -31,7 +31,7 @@ export default async function SectionPage({ params }: SectionPageProps) {
   const serializedRecords = serializeListWithDate(records, "time");
 
   return (
-    <main className="max-w-[60ch] mx-auto p-7">
+    <main className="max-w-[60ch] mx-auto p-5">
       <BackButton text="Gyms" />
       <h1 className="mt-4 font-bold text-2xl mb-2">{section?.name}</h1>
       <div className="mb-4">{section?.description}</div>
