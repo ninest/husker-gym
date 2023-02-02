@@ -6,9 +6,11 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" {...{ "data-mode": "dark" }}>
+    <html lang="en" className="dark">
       <head />
-      <body className={`${inter.variable} font-sans text-gray-800 dark:text-gray-200 dark:bg-black`}>
+      <body
+        className={`${inter.variable} font-sans text-gray-800 dark:text-gray-200 dark:bg-black`}
+      >
         {children}
       </body>
     </html>

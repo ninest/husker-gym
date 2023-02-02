@@ -27,7 +27,7 @@ export const useTheme = () => {
 
   const setTheme = (theme: Theme) => {
     mergeSettings({ theme });
-    document.documentElement.dataset.mode = theme;
+    document.documentElement.className = theme;
   };
 
   const theme = settings.theme;

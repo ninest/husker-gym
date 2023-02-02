@@ -7,7 +7,8 @@ import { FaEllipsisH, FaMoon, FaSun } from "react-icons/fa";
 export const Navbar = () => {
   const { theme, setTheme } = useTheme();
   useEffect(() => {
-    document.body.dataset.mode = theme;
+    console.log(theme);
+    document.documentElement.className = theme;
   }, []);
   return (
     <header className="px-5 pt-3">
