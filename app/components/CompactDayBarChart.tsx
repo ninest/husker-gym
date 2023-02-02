@@ -66,6 +66,7 @@ export const CompactDayBarChartInner = ({
     return { hour, percent };
   });
 
+  // TODO: don't rely on the order of records to get the latest record
   const lastRecord = records[0];
   const livePercent = lastRecord.percent;
   const liveTime = lastRecord.time;
