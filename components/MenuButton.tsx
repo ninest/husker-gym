@@ -32,7 +32,7 @@ export const MenuButton = ({ children, items }: MenuButtonProps) => {
           >
             {items.map((item, index) => {
               if (item === "separator") {
-                return <hr className="my-2 dark:border-gray-800" />;
+                return <hr key={index} className="my-2 dark:border-gray-800" />;
               }
               const Icon = item.icon;
               const dropdownMenuItem = (
@@ -51,7 +51,11 @@ export const MenuButton = ({ children, items }: MenuButtonProps) => {
               );
 
               if (item.href) {
-                return <Link href={item.href}>{dropdownMenuItem}</Link>;
+                return (
+                  <Link key={index} href={item.href}>
+                    {dropdownMenuItem}
+                  </Link>
+                );
               }
 
               return dropdownMenuItem;
