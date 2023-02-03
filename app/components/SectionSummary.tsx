@@ -30,11 +30,11 @@ export const SectionSummary = async ({ slug }: { slug: string }) => {
   return (
     <Link
       href={`/${section?.slug}`}
-      className="block rounded-lg dark:rounded-xl p-3 bg-gray-50 hover:bg-gray-100 dark:bg-gray-900 hover:dark:bg-gray-800"
+      className="block"
     >
       <div className="flex justify-between">
         <div className="flex flex-col">
-          <h3 className="font-bold dark:text-gray-200">
+          <h3 className="font-semibold dark:text-gray-200">
             {shortenedSectionName}
           </h3>
           <div className="text-sm">
