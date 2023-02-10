@@ -33,18 +33,31 @@ export const getFilteredRecords = ({
 
 export const getAverageCount = ({ records, day, hour }: GetRecordsParams) => {
   const filteredRecords = getFilteredRecords({ records, day, hour });
-  const sum = filteredRecords.reduce((acc, rec) => acc + rec.count, 0);
-  return sum / filteredRecords.length;
+  const groups = groupRecordsByDate(filteredRecords);
+  const means = groups.map((group) => {
+    const { records } = group;
+    const sum = records.reduce((acc, rec) => acc + rec.count, 0);
+    return sum / records.length;
+  });
+
+  // Return mean of all means
+  const sum = means.reduce((acc, curr) => acc + curr, 0);
+  return sum / means.length;
 };
 
 export const getAveragePercent = ({ records, day, hour }: GetRecordsParams) => {
   const filteredRecords = getFilteredRecords({ records, day, hour });
-  const sum = filteredRecords.reduce((acc, rec) => acc + rec.percent, 0);
-  return sum / filteredRecords.length;
+  const groups = groupRecordsByDate(filteredRecords);
+  const means = groups.map((group) => {
+    const { records } = group;
+    const sum = records.reduce((acc, rec) => acc + rec.percent, 0);
+    return sum / records.length;
+  });
+
+  // Return mean of all means
+  const sum = means.reduce((acc, curr) => acc + curr, 0);
+  return sum / means.length;
 };
-
-
-
 
 interface Group {
   dateString: string;
