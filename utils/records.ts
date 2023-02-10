@@ -7,7 +7,11 @@ interface GetRecordsParams extends DayHour {
 }
 
 // day is 0-indexed
-export const getFilteredRecords = ({ records, day, hour }: GetRecordsParams) => {
+export const getFilteredRecords = ({
+  records,
+  day,
+  hour,
+}: GetRecordsParams) => {
   // Take into account for timezones
   const offsetHours = new Date().getTimezoneOffset() / 60;
   const hourTZ = hour - offsetHours;
