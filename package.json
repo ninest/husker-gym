@@ -6,7 +6,8 @@
     "dev": "TZ=\"UTC\" next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test":"TZ=\"UTC\" vitest"
   },
   "dependencies": {
     "@next/font": "13.1.2",
@@ -36,6 +37,7 @@
     "autoprefixer": "^10.4.13",
     "postcss": "^8.4.21",
     "prisma": "^4.8.1",
-    "tailwindcss": "^3.2.4"
+    "tailwindcss": "^3.2.4",
+    "vitest": "^0.28.4"
   }
 }
