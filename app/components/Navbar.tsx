@@ -4,7 +4,14 @@ import { utcToEst } from "@/date/utils";
 import { useTheme } from "@/hooks/settings";
 import { format } from "date-fns";
 
-import { FaEllipsisH, FaHeart, FaMoon, FaPaw, FaSun } from "react-icons/fa";
+import {
+  FaEllipsisH,
+  FaGithub,
+  FaHeart,
+  FaMoon,
+  FaPaw,
+  FaSun,
+} from "react-icons/fa";
 
 export const Navbar = () => {
   const { setTheme } = useTheme();
@@ -45,6 +52,12 @@ export const Navbar = () => {
               icon: FaHeart,
               title: "Support",
               href: "https://husker.vercel.app/support",
+            },
+            "separator",
+            {
+              icon: FaGithub,
+              title: "GitHub",
+              href: "https://github.com/husker-nu/husker-gym",
             },
           ]}
         >
