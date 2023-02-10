@@ -1,19 +1,20 @@
 "use client";
 
 import { DAYS, HOURS, twentyFourHourToAMPMHour } from "@/date/display";
-import {
-  parseListWithDate
-} from "@/date/utils";
+import { parseListWithDate } from "@/date/utils";
 import { getHourColorFromPercent } from "@/style/colors";
 import { DayHour } from "@/types";
+import { roundToWhole } from "@/utils/numbers";
 import {
   getAverageCount,
-  getAveragePercent, getFilteredRecords
+  getAveragePercent,
+  getFilteredRecords,
 } from "@/utils/records";
 import { record, section } from "@prisma/client";
 import clsx from "clsx";
 import { format } from "date-fns";
 import { useState } from "react";
+import { SimpleBarCountChartProps } from "./SimpleBarCountChart";
 
 interface WeekHeatMapProps {
   section: section;
@@ -35,7 +36,7 @@ export const WeekHeatMap = ({
 
   return (
     <div>
-      <div className="mb-8 bg-gray-50 -m-2 p-2 rounded-xl dark:bg-black">
+      <div className="bg-gray-50 -m-2 p-2 rounded-xl dark:bg-black">
         {/* First row, days */}
         <div className="grid grid-cols-week gap-2 mb-3">
           <div></div>
@@ -43,7 +44,8 @@ export const WeekHeatMap = ({
             <div
               key={day.shortName}
               className={clsx("text-center", {
-                "bg-green-200 rounded-md dark:bg-green-800": today.day == dayIndex,
+                "bg-green-200 rounded-md dark:bg-green-800":
+                  today.day == dayIndex,
               })}
             >
               {day.singleChar}
@@ -55,7 +57,8 @@ export const WeekHeatMap = ({
             <div key={hour} className="grid grid-cols-week gap-2">
               <div
                 className={clsx("text-sm text-right pr-1 tabular-nums", {
-                  "bg-green-200 rounded-md dark:bg-green-800": today.hour == hour,
+                  "bg-green-200 rounded-md dark:bg-green-800":
+                    today.hour == hour,
                 })}
               >
                 {twentyFourHourToAMPMHour(hour)}
@@ -63,6 +66,9 @@ export const WeekHeatMap = ({
 
               {DAYS.map((day, dayIndex) => {
                 const isNow = dayIndex == today.day && hour == today.hour;
+                const isSelected =
+                  dayIndex == selectedDayHour?.day &&
+                  hour == selectedDayHour.hour;
                 const averagePercentFull = getAveragePercent({
                   records,
                   day: dayIndex,
@@ -72,8 +78,12 @@ export const WeekHeatMap = ({
                 return (
                   <div
                     key={dayIndex}
-                    className={clsx(`rounded-md`, bgClass, {
+                    className={clsx(bgClass, {
+                      // Highlight current time
                       "ring-4 ring-green-400": isNow,
+                      // More rounded if selected
+                      "rounded-md": !isSelected,
+                      "rounded-xl": isSelected,
                     })}
                     onClick={() =>
                       setSelectedDayHour({ day: dayIndex, hour: hour })
@@ -86,66 +96,88 @@ export const WeekHeatMap = ({
         </div>
       </div>
 
-      {selectedDayHour ? (
-        <>
-          <div className="">
-            {validDataForDayHour(selectedDayHour) ? (
-              <>
-                <div className="space-y-3">
-                  <p className="">
-                    On {DAYS[selectedDayHour.day].name} at{" "}
-                    {selectedDayHour.hour}
-                    :00, {section.name} usually has{" "}
-                    <span className="font-bold">
-                      {getAverageCount({ records, ...selectedDayHour })} people
-                    </span>{" "}
-                    and is{" "}
-                    <span className="font-bold">
-                      {getAveragePercent({ records, ...selectedDayHour })}% full
-                    </span>
-                    .
-                  </p>
+      <div className="mt-6">
+        {selectedDayHour ? (
+          <>
+            <div className="">
+              {validDataForDayHour(selectedDayHour) ? (
+                <>
+                  <SimpleBarCountChartProps
+                    records={records}
+                    selectedDayHour={selectedDayHour}
+                  />
 
-                  <p className="">In the past weeks,</p>
-                  <ul className="text-sm list-disc list-outside ml-5">
-                    {getFilteredRecords({ records, ...selectedDayHour }).map(
-                      (record) => (
-                        <li>
-                          On {format(record.time, "EEEE, LLLL d 'at' HH:mm")},{" "}
-                          {section.name} had{" "}
-                          <span className="font-bold">
-                            {record.count} people
-                          </span>{" "}
-                          and was{" "}
-                          <span className="font-bold">
-                            {record.percent}% full
-                          </span>
-                          .
-                        </li>
-                      )
-                    )}
-                  </ul>
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="">
-                  There is no valid data for {section.name} on{" "}
-                  {DAYS[selectedDayHour.day].name} at {selectedDayHour.hour}
-                  :00.
-                </div>
-              </>
-            )}
+                  <details>
+                    <summary className="mt-5 text-sm text-gray-500 font-bold">
+                      Show more details
+                    </summary>{" "}
+                    <div className="mt-2 space-y-3 dark:text-gray-300">
+                      <p className="">
+                        On {DAYS[selectedDayHour.day].name} at{" "}
+                        {selectedDayHour.hour}
+                        :00, {section.name} usually has{" "}
+                        <span className="font-bold">
+                          {roundToWhole(
+                            getAverageCount({ records, ...selectedDayHour })
+                          )}{" "}
+                          people
+                        </span>{" "}
+                        and is{" "}
+                        <span className="font-bold">
+                          {roundToWhole(
+                            getAveragePercent({ records, ...selectedDayHour })
+                          )}
+                          % full
+                        </span>
+                        .
+                      </p>
+
+                      <p className="">In the past weeks,</p>
+                      <ul className="text-sm list-disc list-outside ml-5">
+                        {getFilteredRecords({
+                          records,
+                          ...selectedDayHour,
+                        }).map((record) => (
+                          <li>
+                            {format(record.time, "EEEE, MMM d 'at' HH:mm")}:{" "}
+                            {section.name} had{" "}
+                            <span className="font-bold">
+                              {roundToWhole(record.count)} people
+                            </span>{" "}
+                            and was{" "}
+                            <span className="font-bold">
+                              {roundToWhole(record.percent)}% full
+                            </span>
+                            .
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </details>
+                </>
+              ) : (
+                <>
+                  <div className="text-sm font-semibold text-gray-500">
+                    There is no valid data for {section.name} on{" "}
+                    {DAYS[selectedDayHour.day].name} at {selectedDayHour.hour}
+                    :00.
+                  </div>
+                </>
+              )}
+            </div>
+          </>
+        ) : (
+          <div className="p-4 rounded-xl border-4 border-dashed dark:border-gray-700">
+            <div className="font-medium text-center text-gray-500">
+              Click on a cell to get more information about the gym on that day
+              and time.
+            </div>
           </div>
-        </>
-      ) : (
-        <div className="p-4 rounded-xl border-4 border-dashed dark:border-gray-700">
-          <div className="font-medium text-center text-gray-500">
-            Click on a cell to get more information about the gym on that day
-            and time.
-          </div>
-        </div>
-      )}
+        )}
+      </div>
+
+      {/* Extra space so the page doesn't jump around when something is clicked */}
+      <div className="h-52" />
     </div>
   );
 };
