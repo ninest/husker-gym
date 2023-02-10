@@ -83,7 +83,7 @@ export const WeekHeatMap = ({
                       "ring-4 ring-green-400": isNow,
                       // More rounded if selected
                       "rounded-md": !isSelected,
-                      "rounded-full": isSelected,
+                      "rounded-xl": isSelected,
                     })}
                     onClick={() =>
                       setSelectedDayHour({ day: dayIndex, hour: hour })
@@ -111,7 +111,7 @@ export const WeekHeatMap = ({
                     <summary className="mt-5 text-sm text-gray-500 font-bold">
                       Show more details
                     </summary>{" "}
-                    <div className="mt-2 space-y-3">
+                    <div className="mt-2 space-y-3 dark:text-gray-300">
                       <p className="">
                         On {DAYS[selectedDayHour.day].name} at{" "}
                         {selectedDayHour.hour}
@@ -139,7 +139,7 @@ export const WeekHeatMap = ({
                           ...selectedDayHour,
                         }).map((record) => (
                           <li>
-                            On {format(record.time, "EEEE, LLLL d 'at' HH:mm")},{" "}
+                            {format(record.time, "EEEE, MMM d 'at' HH:mm")}:{" "}
                             {section.name} had{" "}
                             <span className="font-bold">
                               {roundToWhole(record.count)} people
