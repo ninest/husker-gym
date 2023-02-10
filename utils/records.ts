@@ -1,6 +1,6 @@
 import { DayHour } from "@/types";
 import { record } from "@prisma/client";
-import { addHours } from "date-fns";
+import { addHours, format } from "date-fns";
 
 interface GetRecordsParams extends DayHour {
   records: record[];
@@ -41,4 +41,30 @@ export const getAveragePercent = ({ records, day, hour }: GetRecordsParams) => {
   const filteredRecords = getFilteredRecords({ records, day, hour });
   const sum = filteredRecords.reduce((acc, rec) => acc + rec.percent, 0);
   return sum / filteredRecords.length;
+};
+
+
+
+
+interface Group {
+  dateString: string;
+  records: record[];
+}
+
+export const groupRecordsByDate = (records: record[]) => {
+  const groups: Group[] = [];
+
+  records.forEach((record) => {
+    const dateString = format(record.time, "yyyy-MM-dd");
+    const existingGroup = groups.find(
+      (group) => group.dateString === dateString
+    );
+    if (existingGroup) {
+      existingGroup.records.push(record);
+    } else {
+      groups.push({ dateString, records: [record] });
+    }
+  });
+
+  return groups;
 };
