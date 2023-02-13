@@ -123,8 +123,8 @@ export default function AboutPage() {
       </Title>
       <p>
         Husker Gym (name not final) is a website that aims to show you the best
-        times to go to the gym. It aims to do this by showing you a quick view,
-        daily view, and weekly view on the crowd levels in the gym.
+        times to go to the gym. It does this by showing you a quick view, daily
+        view, and weekly view on the crowd levels in the gym.
       </p>
       <Title level={2}>Quick View</Title>
       <p>
