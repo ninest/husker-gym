@@ -1,10 +1,10 @@
 /* Weak heatmap */
 export const WEEK_HEATMAP_COLORS = {
   SPARSE: "bg-blue-100 dark:opacity-60", // 0-20% full
-  NORMAL: "bg-blue-300 dark:opacity-50", // 20-40
-  BUSY: "bg-blue-500 dark:opacity-40", // 40-60
-  CROWDED: "bg-blue-700 dark:opacity-40", // 60-80
-  VERY_CROWDED: "bg-blue-900 dark:opacity-40", // >80
+  NORMAL: "bg-blue-300 dark:opacity-60", // 20-40
+  BUSY: "bg-blue-500 dark:opacity-50", // 40-60
+  CROWDED: "bg-blue-700 dark:opacity-50", // 60-80
+  VERY_CROWDED: "bg-indigo-900 dark:opacity-50", // >80
 };
 
 export const getHourColorFromPercent = (percent: number) => {

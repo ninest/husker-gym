@@ -23,7 +23,7 @@ export const twentyFourHourToAMPMHour = (hour: number): string => {
 // Need better name
 // 17 -> 5p
 export const twentyFourHourToShortAMPMHour = (hour: number): string => {
-  if (hour === 12) return `12 p`
+  if (hour === 12) return `12p`
   if (hour > 12) {
     return `${hour - 12}p`;
   } else {

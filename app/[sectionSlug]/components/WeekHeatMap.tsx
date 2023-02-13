@@ -43,7 +43,7 @@ export const WeekHeatMap = ({
           {DAYS.map((day, dayIndex) => (
             <div
               key={day.shortName}
-              className={clsx("text-center", {
+              className={clsx("text-center font-medium text-gray-500", {
                 "bg-green-200 rounded-md dark:bg-green-800":
                   today.day == dayIndex,
               })}
@@ -56,10 +56,13 @@ export const WeekHeatMap = ({
           {HOURS.map((hour) => (
             <div key={hour} className="grid grid-cols-week gap-2">
               <div
-                className={clsx("text-sm text-right pr-1 tabular-nums", {
-                  "bg-green-200 rounded-md dark:bg-green-800":
-                    today.hour == hour,
-                })}
+                className={clsx(
+                  "text-sm font-medium text-gray-500 text-right pr-1 tabular-nums",
+                  {
+                    "bg-green-200 rounded-md dark:bg-green-800":
+                      today.hour == hour,
+                  }
+                )}
               >
                 {twentyFourHourToAMPMHour(hour)}
               </div>
@@ -82,10 +85,13 @@ export const WeekHeatMap = ({
                       // Highlight current time
                       "ring-4 ring-green-400": isNow,
                       // More rounded if selected
-                      "rounded-md": !isSelected,
+                      rounded: !isSelected,
                       "rounded-xl": isSelected,
                     })}
                     onClick={() =>
+                      setSelectedDayHour({ day: dayIndex, hour: hour })
+                    }
+                    onMouseEnter={() =>
                       setSelectedDayHour({ day: dayIndex, hour: hour })
                     }
                   />
@@ -133,22 +139,25 @@ export const WeekHeatMap = ({
                       </p>
 
                       <p className="">In the past weeks,</p>
-                      <ul className="text-sm list-disc list-outside ml-5">
+                      <ul className="text-sm list-disc">
                         {getFilteredRecords({
                           records,
                           ...selectedDayHour,
                         }).map((record) => (
-                          <li>
-                            {format(record.time, "EEEE, MMM d 'at' HH:mm")}:{" "}
-                            {section.name} had{" "}
-                            <span className="font-bold">
-                              {roundToWhole(record.count)} people
-                            </span>{" "}
-                            and was{" "}
-                            <span className="font-bold">
-                              {roundToWhole(record.percent)}% full
-                            </span>
-                            .
+                          <li className="flex justify-between">
+                            <div>
+                              {format(record.time, "EEE, MMM d 'at' HH:mm")}
+                            </div>
+
+                            <div>
+                              <span className="font-bold">
+                                {roundToWhole(record.count)} people
+                              </span>
+                              ,{" "}
+                              <span className="font-bold">
+                                {roundToWhole(record.percent)}% full
+                              </span>
+                            </div>
                           </li>
                         ))}
                       </ul>
@@ -177,7 +186,7 @@ export const WeekHeatMap = ({
       </div>
 
       {/* Extra space so the page doesn't jump around when something is clicked */}
-      <div className="h-52" />
+      <div className="h-[80vh]" />
     </div>
   );
 };
