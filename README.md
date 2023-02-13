@@ -7,13 +7,15 @@ This website displays charts and visualizations to show how crowded the Northeas
 ## Images
 
 <p align="center">
-  <img src="./assets/main.png" align="left">
-  <img src="./assets/day.png" align="right">
+  <img src="./assets/main.png" width="40%">
+  &nbsp;
+  <img src="./assets/day.png" width="40%">
 </p>
 
 <p align="center">
-  <img src="./assets/week.png" align="left">
-  <img src="./assets/week-info.png" align="right">
+  <img src="./assets/week.png"  width="40%">
+  &nbsp;
+  <img src="./assets/week-info.png"  width="40%">
 </p>
 
 ## Development
