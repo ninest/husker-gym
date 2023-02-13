@@ -31,6 +31,10 @@ export const Navbar = () => {
               title: "About",
               href: "/about",
             },
+            {
+              title: "Feedback",
+              href: "https://husker.vercel.app/contribute?name=Husker+Gym",
+            },
             "separator",
             {
               icon: FaMoon,
