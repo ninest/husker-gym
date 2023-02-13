@@ -12,6 +12,7 @@ export const lastUpdated = (date: Date): string => {
 // Need better name
 // 17 -> 5 PM
 export const twentyFourHourToAMPMHour = (hour: number): string => {
+  if (hour === 12) return `12 PM`
   if (hour > 12) {
     return `${hour - 12} PM`;
   } else {
@@ -22,6 +23,7 @@ export const twentyFourHourToAMPMHour = (hour: number): string => {
 // Need better name
 // 17 -> 5p
 export const twentyFourHourToShortAMPMHour = (hour: number): string => {
+  if (hour === 12) return `12 p`
   if (hour > 12) {
     return `${hour - 12}p`;
   } else {
