@@ -7,12 +7,21 @@ import {
 import { getRecentRecords, getSectionBySlug } from "@/db/functions";
 import { crowdLevelDescription } from "@/string";
 import { getTextBgColor } from "@/style/colors";
+import { formatOrdinals } from "@/utils/numbers";
+import { record, section } from "@prisma/client";
 import clsx from "clsx";
 import Link from "next/link";
 import { CompactDayBarChart } from "./CompactDayBarChart";
 
+const floorMap: Record<section["slug"], number> = {
+  "marino-weight-room": 3,
+  "marino-select-cardio": 3,
+};
+
 export const SectionSummary = async ({ slug }: { slug: string }) => {
   const section = await getSectionBySlug(slug);
+
+  if (!section) throw Error("Invalid section");
 
   // Remove the "Marino " or "Squashbusters " to make the name less verbose
   const shortenedSectionName = section?.name.substring(
@@ -27,16 +36,23 @@ export const SectionSummary = async ({ slug }: { slug: string }) => {
 
   const serializedRecords = serializeListWithDate(records, "time");
 
+  const showFloor = Object.keys(floorMap).includes(slug);
+
   return (
-    <Link
-      href={`/${section?.slug}`}
-      className="block"
-    >
+    <Link href={`/${section.slug}`} className="block">
       <div className="flex justify-between">
         <div className="flex flex-col">
-          <h3 className="font-semibold dark:text-gray-200">
-            {shortenedSectionName}
+          <h3>
+            <span className="font-semibold dark:text-gray-200">
+              {shortenedSectionName}
+            </span>
+            {showFloor && (
+              <span className="ml-1 text-sm text-gray-600 dark:text-gray-400">
+                {formatOrdinals(floorMap[section.slug])} floor
+              </span>
+            )}
           </h3>
+
           <div className="text-sm">
             <span
               className={clsx(
