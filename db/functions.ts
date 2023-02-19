@@ -19,7 +19,7 @@ interface GetRecentRecordsParams {
 }
 export const getRecentRecords = async ({
   sectionId,
-  daysBack = 3 * 7, // Default 3 weeks
+  daysBack = 4 * 7, // Default 4 weeks
 }: GetRecentRecordsParams) => {
   // Get most recent records ...
   const now = addDays(new Date(), 1);

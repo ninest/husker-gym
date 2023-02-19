@@ -21,7 +21,7 @@ export default async function SectionPage({ params }: SectionPageProps) {
   const section = await getSectionBySlug(params.sectionSlug);
   const records = await getRecentRecords({
     sectionId: section?.id!,
-    daysBack: 3 * 7,
+    daysBack: 4 * 7,
   });
 
   // TODO: section invalid, show error
