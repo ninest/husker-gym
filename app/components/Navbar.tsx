@@ -8,6 +8,7 @@ import {
   FaEllipsisH,
   FaGithub,
   FaHeart,
+  FaMailBulk,
   FaMoon,
   FaPaw,
   FaSun,
@@ -34,6 +35,11 @@ export const Navbar = () => {
             {
               title: "Feedback",
               href: "https://husker.vercel.app/contribute?name=Husker+Gym",
+            },
+            {
+              icon: FaMailBulk,
+              title: "Mailing list",
+              href: "http://eepurl.com/imB7zE",
             },
             "separator",
             {
