@@ -7,17 +7,17 @@ export const bostonTime = (): Date => {
 };
 
 export const utcToEst = (date: Date): Date => {
-  return subMinutes(date, 300);
+  return subMinutes(date, 300 - 60);
 };
 
 export const estToUtc = (date: Date): Date => {
-  return addMinutes(date, 300);
+  return addMinutes(date, 300 - 60);
 };
 
 export const getUtcToEstDayHour = (date: Date): DayHour => {
   // utc to est conversion
   // TODO: use timezone instead of offset to account for DST
-  const est = subMinutes(date, 300);
+  const est = subMinutes(date, 300 - 60);
   return {
     day: est.getUTCDay(),
     hour: est.getUTCHours(),
