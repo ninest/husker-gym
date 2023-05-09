@@ -8,9 +8,14 @@ export const getGyms = () =>
     include: { sections: { select: { id: true, slug: true } } },
   });
 
+export const getGym = (slug: string) =>
+  prisma.gym.findFirst({
+    where: { slug },
+    include: { sections: { select: { id: true, slug: true } } },
+  });
+
 // Get a gym section from slug
-export const getSectionBySlug = (slug: string) =>
-  prisma.section.findFirst({ where: { slug } });
+export const getSectionBySlug = (slug: string) => prisma.section.findFirst({ where: { slug } });
 
 // Get records (past `daysBack` days) for a gym section
 interface GetRecentRecordsParams {
