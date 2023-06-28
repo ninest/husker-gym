@@ -16,7 +16,7 @@ export default async function HomePage() {
     <>
       <Navbar />
       <main className="max-w-[60ch] mx-auto p-5 pt-4 space-y-6">
-        <Gym closedMessage={"Closed for Summer I"} gym={marino} />
+        <Gym gym={marino} />
         <Gym gym={squash} />
         <Gym gym={cabot} />
       </main>
@@ -31,7 +31,7 @@ interface GymProps extends ComponentProps<"section"> {
 function Gym({ closedMessage, gym, className }: GymProps) {
   return (
     <section className={className}>
-      <h2 className="font-bold text-lg -mb-2">{gym?.name}</h2>
+      <h2 className="font-bold text-xl -mb-2">{gym?.name}</h2>
       {closedMessage ? (
         <section
           style={{

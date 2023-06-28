@@ -12,6 +12,7 @@ import { CompactDayBarChart } from "./CompactDayBarChart";
 const floorMap: Record<section["slug"], number> = {
   "marino-weight-room": 3,
   "marino-select-cardio": 3,
+  "marino-strength-select": 3,
 };
 
 export const SectionSummary = async ({ slug }: { slug: string }) => {
@@ -41,7 +42,7 @@ export const SectionSummary = async ({ slug }: { slug: string }) => {
       <div className="flex justify-between">
         <div className="flex flex-col">
           <h3>
-            <span className="font-semibold dark:text-gray-200">{shortenedSectionName}</span>
+            <span className="font-medium dark:text-gray-200">{shortenedSectionName}</span>
             {showFloor && (
               <span className="ml-1 text-sm text-gray-600 dark:text-gray-400">
                 {formatOrdinals(floorMap[section.slug])} floor
@@ -63,7 +64,7 @@ export const SectionSummary = async ({ slug }: { slug: string }) => {
                 >
                   Live
                 </span>
-                <span>{crowdLevelDescription(lastRecord.percent)}</span>
+                <span>{" "}{crowdLevelDescription(lastRecord.percent)}</span>
               </div>
               <div className="mt-2 text-xs text-gray-500">{lastUpdated(lastRecordTime)}</div>
             </>
