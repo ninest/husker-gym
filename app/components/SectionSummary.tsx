@@ -25,8 +25,8 @@ export const SectionSummary = async ({ slug }: { slug: string }) => {
 
   const records = await getRecentRecords({
     sectionId: section?.id!,
-    // One week
-    daysBack: 1 * 7,
+    // four weeks
+    daysBack: 4 * 7,
   });
 
   const lastRecord = records[0];
