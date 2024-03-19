@@ -81,7 +81,7 @@ const SimpleBar = ({ percent, innerText }: SimpleBarProps) => {
           "rounded-md h-full overflow-hidden opacity-70"
         )}
       ></div>
-      <div className="absolute top-1/2 -translate-y-1/2 right-2 z-100 text-xs font-semibold text-gray-600 dark:text-gray-300">
+      <div className="absolute top-1/2 -translate-y-1/2 right-2 z-40 text-xs font-semibold text-gray-600 dark:text-gray-300">
         {innerText}
       </div>
     </div>

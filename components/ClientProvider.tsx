@@ -9,22 +9,17 @@ import { useEffect } from "react";
 export const ClientProvider = () => {
   const { theme } = useTheme();
   const pathname = usePathname();
-  
+
   // Seems like safari does not want you to set the website tint to pure white
   const statusBarColorMap = { light: "#efefef", dark: "#000000" };
   useEffect(() => {
     document.documentElement.className = theme;
-    (document.getElementsByTagName("meta") as any)["theme-color"].content =
-      statusBarColorMap[theme];
+    // (document.getElementsByTagName("meta") as any)["theme-color"].content = statusBarColorMap[theme];
   }, []);
 
   // Goat counter
   useEffect(() => {
-    if (
-      process.env.NODE_ENV === "production" &&
-      typeof window !== "undefined" &&
-      "goatcounter" in window
-    ) {
+    if (process.env.NODE_ENV === "production" && typeof window !== "undefined" && "goatcounter" in window) {
       // @ts-ignore
       window.goatcounter.count({
         path: pathname,
