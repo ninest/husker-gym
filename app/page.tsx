@@ -8,20 +8,21 @@ export const revalidate = 0; // no cache
 
 export default async function HomePage() {
   // const gyms = await getGyms();
-  const marino = await getGym("marino");
-  const squash = await getGym("squashbusters");
-  const cabot = await getGym("cabot");
+  return <div className="p-5">Under maintenance – Please come back later!</div>
+  // const marino = await getGym("marino");
+  // const squash = await getGym("squashbusters");
+  // const cabot = await getGym("cabot");
 
-  return (
-    <>
-      <Navbar />
-      <main className="max-w-[60ch] mx-auto p-5 pt-4 space-y-6">
-        <Gym gym={marino} />
-        <Gym gym={squash} />
-        <Gym gym={cabot} />
-      </main>
-    </>
-  );
+  // return (
+  //   <>
+  //     <Navbar />
+  //     <main className="max-w-[60ch] mx-auto p-5 pt-4 space-y-6">
+  //       <Gym gym={marino} />
+  //       <Gym gym={squash} />
+  //       <Gym gym={cabot} />
+  //     </main>
+  //   </>
+  // );
 }
 
 interface GymProps extends ComponentProps<"section"> {

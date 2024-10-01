@@ -65,3 +65,7 @@ Generate the prisma client with
 npx prisma generate
 ```
 
+## Contributors
+
+- [Parth Kabra](https://www.parthkabra.me/)
+- ... (more from Northeastern Electric Racing)
